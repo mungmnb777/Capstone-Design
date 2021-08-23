@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="fragments/header :: header">
+    <meta charset="UTF-8">
+</head>
+<body>
+<div th:replace="fragments/bodyHeader :: bodyHeader"></div>
+<div th:replace="fragments/navigation :: navigation"></div>
+<div class="container" style="max-width:600px">
+    <h3 class="text-center" th:text="로그인"></h3>
+    <form th:action th:object="${form}" method="post">
+        <div class="py-1" th:if="${#fields.hasGlobalErrors()}">
+            <p class="field-error" th:each="err : ${#fields.globalErrors()}" th:text="${err}">
+                글로벌 오류 메세지
+            </p>
+        </div>
+        <div class="py-1">
+            <label for="id">ID</label>
+            <input type="text" id="id" th:field="*{id}" class="form-control"
+                   th:errorclass="field-error" placeholder="ID를 입력하세요">
+            <div class="field-error" th:errors="*{id}">
+                ID ERROR
+            </div>
+        </div>
+        <div class="py-1">
+            <label for="password">비밀번호</label>
+            <input type="password" id="password" th:field="*{password}" class="form-control"
+                   th:errorclass="field-error" placeholder="비밀번호를 입력하세요">
+            <div class="field-error" th:errors="*{password}">
+                PASSWORD ERROR
+            </div>
+        </div>
+        <div class="py-1 d-flex flex-row justify-content-center">
+            <div class="me-2">
+                <button class="btn btn-outline-secondary" type="submit">로그인</button>
+            </div>
+            <div class="me-2">
+                <a th:href="@{/}">
+                    <button class="btn btn-outline-danger" type="button">취소</button>
+                </a>
+            </div>
+        </div>
+    </form>
+</div>
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>

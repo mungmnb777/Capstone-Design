@@ -1,0 +1,71 @@
+package graduation.mazerunner.domain;
+
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class Post {
+
+    @Id
+    @GeneratedValue
+    @Column(name = "post_id")
+    private Long id;
+
+    /**
+     * 게시글 제목
+     */
+    @Column(name = "post_title")
+    private String title;
+
+    /**
+     * 게시글 내용
+     */
+    @Column(name = "post_content")
+    private String content;
+
+    /**
+     * 게시글 생성 일자
+     */
+    @Column(name = "post_cdate")
+    private LocalDateTime cdate;
+
+    /**
+     * 게시글 수정 일자
+     */
+    @Column(name = "post_udate")
+    private LocalDateTime udate;
+
+    /**
+     * 게시글 작성자
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
+
+    /**
+     * 댓글 목록
+     */
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    private List<Reply> replyList = new ArrayList<>();
+
+    @Builder
+    public Post(Long id, String title, String content,
+                LocalDateTime cdate, Member member, List<Reply> replyList) {
+        this.id = id;
+        this.title = title;
+        this.content = content;
+        this.cdate = cdate;
+        this.member = member;
+        this.replyList = replyList;
+    }
+}

@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="fragments/header :: header">
+    <meta charset="UTF-8">
+</head>
+<body>
+<div th:replace="fragments/bodyHeader :: bodyHeader"></div>
+<div th:replace="fragments/navigation :: navigation"></div>
+<div class="container">
+    <form th:action th:object="${form}" method="post">
+        <div class="py-1 d-flex flex-row justify-content-center">
+            <strong id="global-error" style="display:none"># 저장 전 확인 사항 #</strong>
+        </div>
+        <div class="py-1 d-flex flex-row justify-content-center">
+            <div class="field-error" id="start-null-error" style="display:none">
+                맵을 저장하기 위해서는 시작 지점이 필요합니다! 시작 지점을 설정해주세요!
+            </div>
+            <div class="field-error" id="goal-null-error" style="display:none">
+                맵을 저장하기 위해서는 목표 지점이 필요합니다! 목표 지점을 설정해주세요!
+            </div>
+        </div>
+        <div class="py-1 d-flex flex-row justify-content-center">
+            <div class="field-error" id="break-type-error" style="display:none">
+                BREAK 모드의 개수가 잘못 설정되어 있습니다. 다시 한번 확인해주세요!
+            </div>
+            <div class="field-error" id="break-range-error" style="display:none">
+                BREAK 모드의 개수는 0 이상 900 이하입니다. 다시 한번 확인해주세요!
+            </div>
+        </div>
+        <div class="m-2 d-flex flex-row justify-content-center">
+            <div>
+                <label for="title">제목</label>
+                <input type="text" id="title" th:field="*{title}" class="form-control" style="width:400px"
+                       th:errorclass="field-error" placeholder="제목을 입력하세요">
+                <div class="field-error" th:errors="*{title}">
+                    ID ERROR
+                </div>
+                <div class="field-error" id="title-type-error" style="display:none">
+                    제목을 입력해주세요!
+                </div>
+                <div class="field-error" id="title-range-error" style="display:none">
+                    제목을 4자 이상 입력해주세요!
+                </div>
+            </div>
+        </div>
+        <!--높이, 너비-->
+        <div class="m-2 d-flex flex-row justify-content-center">
+            <div class="me-2">
+                <label for="height-input">높이</label>
+                <input type="text" id="height-input" class="form-control"
+                       placeholder="높이를 입력하세요">
+                <div class="field-error" id="height-type-error" style="display:none">
+                    숫자를 입력해주세요!
+                </div>
+                <div class="field-error" id="height-range-error" style="display:none">
+                    높이를 2 이상 설정해주세요.
+                </div>
+            </div>
+            <div class="me-2">
+                <label for="width-input">너비</label>
+                <input type="text" id="width-input" class="form-control"
+                       placeholder="너비를 입력하세요">
+                <div class="field-error" id="width-type-error" style="display:none">
+                    숫자를 입력해주세요!
+                </div>
+                <div class="field-error" id="width-range-error" style="display:none">
+                    너비를 2 이상 설정해주세요.
+                </div>
+            </div>
+            <button type="button" class="btn btn-lg btn-outline-secondary" style="max-height:62px" onclick="build()">BUILD</button>
+        </div>
+        <!--모드-->
+        <div class="m-2 d-flex flex-row justify-content-center">
+            <div class="me-2">
+                <button type="button" class="btn btn-sm btn-outline-dark"
+                        onmouseover="modeMouseOver(1)"
+                        onmouseout="modeMouseOut(1)"
+                        onclick="modeOnClick(1)">BLOCK</button>
+            </div>
+            <div class="me-2">
+                <button type="button" class="btn btn-sm btn-outline-primary"
+                        onmouseover="modeMouseOver(2)"
+                        onmouseout="modeMouseOut(2)"
+                        onclick="modeOnClick(2)">START</button>
+            </div>
+            <div class="me-2">
+                <button type="button" class="btn btn-sm btn-outline-danger"
+                        onmouseover="modeMouseOver(3)"
+                        onmouseout="modeMouseOut(3)"
+                        onclick="modeOnClick(3)">GOAL</button>
+            </div>
+            <div class="me-2">
+                <button type="button" class="btn btn-sm btn-outline-warning"
+                        onmouseover="modeMouseOver(4)"
+                        onmouseout="modeMouseOut(4)"
+                        onclick="modeOnClick(4)">PUSH</button>
+            </div>
+            <div class="me-2">
+                <button type="button" class="btn btn-sm btn-outline-success"
+                        onmouseover="modeMouseOver(5)"
+                        onmouseout="modeMouseOut(5)"
+                        onclick="modeOnClick(5)">BREAK</button>
+            </div>
+            <div class="me-2">
+                <button type="button" class="btn btn-sm btn-outline-light" style="color:black"
+                        onmouseover="modeMouseOver(0)"
+                        onmouseout="modeMouseOut(0)"
+                        onclick="modeOnClick(0)">CANCEL</button>
+            </div>
+        </div>
+        <!--도움말-->
+        <div class="m-2 d-flex flex-row justify-content-center">
+            <div class="pb-5"></div>
+            <div id="mode-cancel" style="display:none">설치한 장애물을 제거합니다.</div>
+            <div id="mode-block" style="display:none">원하는 곳에 장애물을 설치합니다.</div>
+            <div id="mode-start" style="display:none">게임의 시작 지점을 선택합니다.</div>
+            <div id="mode-goal" style="display:none">게임의 목표 지점을 선택합니다.</div>
+            <div id="mode-push" style="display:none">밀 수 있는 장애물을 설치합니다.</div>
+            <div id="mode-break" style="display:none">부술 수 있는 벽의 개수를 설정합니다.</div>
+        </div>
+        <!--테이블-->
+        <div class="m-2">
+            <table id="map-table" class="table d-inline-flex justify-content-center m-0">
+            </table>
+        </div>
+        <!--폼 전송 객체-->
+        <div>
+            <input type="text" th:field="*{content}" style="display:none">
+            <input type="text" th:field="*{height}" style="display:none">
+            <input type="text" th:field="*{width}" style="display:none">
+            <input type="text" th:field="*{breakCount}" style="display:none">
+        </div>
+        <div class="d-flex flex-row justify-content-center">
+            <button type="button" id="save-button" class="btn btn-outline-secondary me-2" style="display:none" onclick="save()">저장</button>
+        </div>
+    </form>
+</div>
+<div th:replace="fragments/footer :: footer"></div>
+<script type="text/javascript" th:inline="javascript">
+    const MODE_CANCEL = 0;
+    const MODE_BLOCK = 1;
+    const MODE_START = 2;
+    const MODE_GOAL = 3;
+    const MODE_PUSH = 4;
+    const MODE_BREAK = 5;
+
+    let presentMode; // 현재 사용 중인 모드
+
+    let map = [];
+
+    let presentStartPosition = {
+        x:-1,
+        y:-1
+    }
+    let presentGoalPosition = {
+        x:-1,
+        y:-1
+    }
+
+    /**
+     * 모드에 따른 메세지 ID 설정
+      */
+    function getModeId(mode) {
+        switch (mode) {
+            case MODE_CANCEL:
+                return "mode-cancel";
+
+            case MODE_BLOCK:
+                return "mode-block";
+
+            case MODE_START:
+                return "mode-start";
+
+            case MODE_GOAL:
+                return "mode-goal";
+
+            case MODE_PUSH:
+                return "mode-push";
+
+            case MODE_BREAK:
+                return "mode-break";
+        }
+    }
+
+    /**
+     * 모드 버튼에 마우스를 올릴 경우 이벤트
+      */
+    function modeMouseOver(mode) {
+        // 모드 버튼 ID
+        const id = getModeId(mode);
+
+        // 모드 버튼 ID를 이용해 div 엘리먼트 가져오기
+        const e = document.getElementById(id);
+
+        if (e.style.display == "none") {
+            e.style.display = "block";
+        }
+    }
+
+    /**
+     * 모드 버튼에 마우스를 뗄 경우 이벤트
+      */
+    function modeMouseOut(mode) {
+        // 모드 버튼 ID
+        const id = getModeId(mode);
+
+        // 모드 버튼 ID를 이용해 div 엘리먼트 가져오기
+        const e = document.getElementById(id);
+
+        if (e.style.display == "block") {
+            e.style.display = "none";
+        }
+    }
+
+    /**
+     * 현재 사용 중인 모드 설정
+     */
+    function modeOnClick(mode) {
+        presentMode = mode;
+
+        if (mode == MODE_BREAK) {
+            let count = prompt("0이상 900이하의 값을 입력해주세요!");
+            while (isNaN(parseInt(count, 10)) || count < 0 || count > 900) {
+                count = prompt("잘못된 값입니다! 다시 입력해주세요!")
+
+                if(count == null) return;
+            }
+            document.getElementById("breakCount").value = count;
+        }
+    }
+
+
+    function isEmpty(value) {
+        if (value === null) return true;
+        if (typeof value === 'undefined') return true ;
+        if (typeof value === 'string' && value === '') return true;
+        if (Array.isArray(value) && value.length < 1) return true;
+        if (typeof value === 'object' && value.constructor.name === 'Object' && Object.keys(value).length < 1 && Object.getOwnPropertyNames(value) < 1) return true;
+        if (typeof value === 'object' && value.constructor.name === 'String' && Object.keys(value).length < 1) return true;
+        return false;
+    }
+
+    /**
+     * 테스트 전 에러 체크
+     */
+    function hasErrorBeforeSave(title, content, breakCount) {
+        let result = false;
+
+        document.getElementById("title-type-error").style.display = "none";
+        document.getElementById("title-range-error").style.display = "none";
+        document.getElementById("title").classList.remove("field-error");
+        document.getElementById("start-null-error").style.display = "none";
+        document.getElementById("goal-null-error").style.display = "none";
+        document.getElementById("global-error").style.display = "none";
+
+        // 제목 에러 체크
+        if (isEmpty(title)) {
+            document.getElementById("title").classList.add("field-error");
+            document.getElementById("title-type-error").style.display = "block";
+            result = true;
+        } else if (title.length < 4) {
+            document.getElementById("title").classList.add("field-error");
+            document.getElementById("title-range-error").style.display = "block";
+            result = true;
+        }
+
+        // 맵 에러 체크
+        if (content.indexOf(MODE_START) == -1) {
+            document.getElementById("global-error").style.display = "block";
+            document.getElementById("start-null-error").style.display = "block";
+            result = true;
+        } else if (content.indexOf(MODE_GOAL) == -1) {
+            document.getElementById("global-error").style.display = "block";
+            document.getElementById("goal-null-error").style.display = "block";
+            result = true;
+        }
+
+        // breakCount 에러 체크
+        if (isNaN(parseInt(breakCount, 10))) {
+            document.getElementById("global-error").style.display = "block";
+            document.getElementById("break-type-error").style.display = "block";
+            result = true;
+        } else if (breakCount < 0 || breakCount > 900) {
+            document.getElementById("global-error").style.display = "block";
+            document.getElementById("break-range-error").style.display = "block";
+            result = true;
+        }
+
+        return result;
+    }
+
+    /**
+     * 테스트하기 전 Form 전송 객체에 정보 담기
+     */
+    function save() {
+        const title = document.getElementById("title").value;
+        const height = document.getElementById("height").value;
+        const width = document.getElementById("width").value;
+        const breakCount = document.getElementById("breakCount").value;
+        let content = "";
+
+        for (let i = 0; i < height; i++) {
+            for (let j = 0; j < width; j++) {
+                content += map[i][j];
+            }
+        }
+        document.getElementById("content").value = content;
+
+        if (hasErrorBeforeSave(title, content, breakCount)) {
+            console.log("error");
+            return;
+        }
+    }
+
+    /**
+     * 빌드 에러 체크
+     */
+    function hasErrorInBuild(height, width) {
+        let result = false;
+
+        document.getElementById("height-type-error").style.display = "none";
+        document.getElementById("height-range-error").style.display = "none";
+        document.getElementById("width-type-error").style.display = "none";
+        document.getElementById("width-range-error").style.display = "none";
+
+        document.getElementById("height-input").classList.remove("field-error");
+        document.getElementById("width-input").classList.remove("field-error");
+
+        if (isNaN(parseInt(height, 10))) {
+            document.getElementById("height-input").classList.add("field-error");
+            document.getElementById("height-type-error").style.display = "block";
+            result = true;
+        } else if (height < 2) {
+            document.getElementById("height-input").classList.add("field-error");
+            document.getElementById("height-range-error").style.display = "block";
+            result = true;
+        }
+        if (isNaN(parseInt(width, 10))) {
+            document.getElementById("width-input").classList.add("field-error");
+            document.getElementById("width-type-error").style.display = "block";
+            result = true;
+        } else if (width < 2) {
+            document.getElementById("width-input").classList.add("field-error");
+            document.getElementById("width-range-error").style.display = "block";
+            result = true;
+        }
+
+        return result;
+    }
+
+    /**
+     * 테이블 생성
+     */
+    function build() {
+        const height = document.getElementById("height-input").value;
+        const width = document.getElementById("width-input").value;
+
+
+
+        if (hasErrorInBuild(height, width)) return;
+
+        // form 전송 필드에 데이터 입력
+        document.getElementById("height").value = height;
+        document.getElementById("width").value = width;
+
+        let parent = []
+
+        for (let i = 0; i < height; i++) {
+
+            let child = [];
+            for (let j = 0; j < width; j++) {
+                child.push(MODE_CANCEL);
+            }
+            parent.push(child);
+        }
+
+        map = parent;
+
+        document.getElementById("save-button").style.display = "block";
+
+        createTable();
+    }
+
+    /**
+     * 필드에 모드 설정
+     */
+    function set(x, y) {
+        switch(presentMode){
+            case MODE_CANCEL:
+                map[x][y] = MODE_CANCEL;
+                break;
+            case MODE_BLOCK:
+                map[x][y] = MODE_BLOCK;
+                break;
+            case MODE_START:
+                if (presentStartPosition.x == -1 && presentStartPosition.y == -1) {
+                    presentStartPosition.x = x;
+                    presentStartPosition.y = y;
+
+                    map[x][y] = MODE_START;
+                } else {
+                    map[presentStartPosition.x][presentStartPosition.y] = MODE_CANCEL;
+
+                    presentStartPosition.x = x;
+                    presentStartPosition.y = y;
+                    map[x][y] = MODE_START;
+                }
+                break;
+            case MODE_GOAL:
+                if (presentGoalPosition.x == -1 && presentGoalPosition.y == -1) {
+                    map[x][y] = MODE_GOAL;
+
+                    presentGoalPosition.x = x;
+                    presentGoalPosition.y = y;
+                } else {
+                    map[presentGoalPosition.x][presentGoalPosition.y] = MODE_CANCEL;
+                    presentGoalPosition.x = x;
+                    presentGoalPosition.y = y;
+
+                    map[x][y] = MODE_GOAL;
+                }
+                break;
+            case MODE_PUSH:
+                map[x][y] = MODE_PUSH;
+                break;
+        }
+
+        createTable();
+    }
+
+    /**
+     * 테이블 생성
+     */
+    function createTable() {
+        const height = document.getElementById("height-input").value;
+        const width = document.getElementById("width-input").value;
+
+        const table = document.getElementById("map-table");
+        const tbody = document.createElement("tbody");
+
+        for (let i = 0; i < height; i++) {
+
+            const tr = document.createElement("tr");
+            tr.classList.add("border-white");
+            for (let j = 0; j < width; j++) {
+
+                let mode = map[i][j];
+                switch (mode) {
+                    case MODE_CANCEL:
+                        tr.innerHTML += "<td class='p-1 border-0'><button type='button' class='btn border-secondary rounded-0' style='height:40px; width:40px' onclick='set("+ i + "," + j + ")'></button></td>";
+                        break;
+                    case MODE_BLOCK:
+                        tr.innerHTML += "<td class='p-1 border-0'><button type='button' class='btn btn-dark rounded-0' style='height:40px; width:40px;' onclick='set("+ i + "," + j + ")'></button></td>";
+                        break;
+                    case MODE_START:
+                        tr.innerHTML += "<td class='p-1 border-0'><button type='button' class='btn btn-primary rounded-0' style='height:40px; width:40px;' onclick='set("+ i + "," + j + ")'></button></td>";
+                        break;
+                    case MODE_GOAL:
+                        tr.innerHTML += "<td class='p-1 border-0'><button type='button' class='btn btn-danger rounded-0' style='height:40px; width:40px;' onclick='set("+ i + "," + j + ")'></button></td>";
+                        break;
+                    case MODE_PUSH:
+                        tr.innerHTML += "<td class='p-1 border-0'><button type='button' class='btn btn-warning rounded-0' style='height:40px; width:40px;' onclick='set("+ i + "," + j + ")'></button></td>";
+                        break;
+                }
+            }
+            tbody.appendChild(tr);
+        }
+        while (table.hasChildNodes()) {
+            table.removeChild(table.firstChild);
+        }
+        table.appendChild(tbody);
+    }
+</script>
+</body>
+</html>
