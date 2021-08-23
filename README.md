@@ -11,5 +11,4 @@
 ### Contributor
 남기은(20153046),이명범(20153067)
 ### 실행방법
-* React 적용 가이드 - http://d2.naver.com/helloworld/1848131
-* React 설치 후 `npm start`를 이용해 실행할 수 있다.
+인텔리제이를 설치하고 빌드한다.
