@@ -7,7 +7,7 @@
 <div th:replace="fragments/bodyHeader :: bodyHeader"></div>
 <div th:replace="fragments/navigation :: navigation"></div>
 <div class="container">
-    <form th:action th:object="${form}" method="post">
+    <form th:action th:object="${form}" method="post" onsubmit="return save()">
         <div class="py-1 d-flex flex-row justify-content-center">
             <strong id="global-error" style="display:none"># 저장 전 확인 사항 #</strong>
         </div>
@@ -67,7 +67,9 @@
                     너비를 2 이상 설정해주세요.
                 </div>
             </div>
-            <button type="button" class="btn btn-lg btn-outline-secondary" style="max-height:62px" onclick="build()">BUILD</button>
+            <button type="button" class="btn btn-lg btn-outline-secondary" style="max-height:62px" onclick="build()">
+                BUILD
+            </button>
         </div>
         <!--모드-->
         <div class="m-2 d-flex flex-row justify-content-center">
@@ -75,37 +77,43 @@
                 <button type="button" class="btn btn-sm btn-outline-dark"
                         onmouseover="modeMouseOver(1)"
                         onmouseout="modeMouseOut(1)"
-                        onclick="modeOnClick(1)">BLOCK</button>
+                        onclick="modeOnClick(1)">BLOCK
+                </button>
             </div>
             <div class="me-2">
                 <button type="button" class="btn btn-sm btn-outline-primary"
                         onmouseover="modeMouseOver(2)"
                         onmouseout="modeMouseOut(2)"
-                        onclick="modeOnClick(2)">START</button>
+                        onclick="modeOnClick(2)">START
+                </button>
             </div>
             <div class="me-2">
                 <button type="button" class="btn btn-sm btn-outline-danger"
                         onmouseover="modeMouseOver(3)"
                         onmouseout="modeMouseOut(3)"
-                        onclick="modeOnClick(3)">GOAL</button>
+                        onclick="modeOnClick(3)">GOAL
+                </button>
             </div>
             <div class="me-2">
                 <button type="button" class="btn btn-sm btn-outline-warning"
                         onmouseover="modeMouseOver(4)"
                         onmouseout="modeMouseOut(4)"
-                        onclick="modeOnClick(4)">PUSH</button>
+                        onclick="modeOnClick(4)">PUSH
+                </button>
             </div>
             <div class="me-2">
                 <button type="button" class="btn btn-sm btn-outline-success"
                         onmouseover="modeMouseOver(5)"
                         onmouseout="modeMouseOut(5)"
-                        onclick="modeOnClick(5)">BREAK</button>
+                        onclick="modeOnClick(5)">BREAK
+                </button>
             </div>
             <div class="me-2">
                 <button type="button" class="btn btn-sm btn-outline-light" style="color:black"
                         onmouseover="modeMouseOver(0)"
                         onmouseout="modeMouseOut(0)"
-                        onclick="modeOnClick(0)">CANCEL</button>
+                        onclick="modeOnClick(0)">CANCEL
+                </button>
             </div>
         </div>
         <!--도움말-->
@@ -131,7 +139,8 @@
             <input type="text" th:field="*{breakCount}" style="display:none">
         </div>
         <div class="d-flex flex-row justify-content-center">
-            <button type="button" id="save-button" class="btn btn-outline-secondary me-2" style="display:none" onclick="save()">저장</button>
+            <button id="save-button" class="btn btn-outline-secondary me-2" style="display:none">저장
+            </button>
         </div>
     </form>
 </div>
@@ -149,17 +158,17 @@
     let map = [];
 
     let presentStartPosition = {
-        x:-1,
-        y:-1
+        x: -1,
+        y: -1
     }
     let presentGoalPosition = {
-        x:-1,
-        y:-1
+        x: -1,
+        y: -1
     }
 
     /**
      * 모드에 따른 메세지 ID 설정
-      */
+     */
     function getModeId(mode) {
         switch (mode) {
             case MODE_CANCEL:
@@ -184,7 +193,7 @@
 
     /**
      * 모드 버튼에 마우스를 올릴 경우 이벤트
-      */
+     */
     function modeMouseOver(mode) {
         // 모드 버튼 ID
         const id = getModeId(mode);
@@ -199,7 +208,7 @@
 
     /**
      * 모드 버튼에 마우스를 뗄 경우 이벤트
-      */
+     */
     function modeMouseOut(mode) {
         // 모드 버튼 ID
         const id = getModeId(mode);
@@ -223,7 +232,7 @@
             while (isNaN(parseInt(count, 10)) || count < 0 || count > 900) {
                 count = prompt("잘못된 값입니다! 다시 입력해주세요!")
 
-                if(count == null) return;
+                if (count == null) return;
             }
             document.getElementById("breakCount").value = count;
         }
@@ -232,7 +241,7 @@
 
     function isEmpty(value) {
         if (value === null) return true;
-        if (typeof value === 'undefined') return true ;
+        if (typeof value === 'undefined') return true;
         if (typeof value === 'string' && value === '') return true;
         if (Array.isArray(value) && value.length < 1) return true;
         if (typeof value === 'object' && value.constructor.name === 'Object' && Object.keys(value).length < 1 && Object.getOwnPropertyNames(value) < 1) return true;
@@ -308,8 +317,10 @@
 
         if (hasErrorBeforeSave(title, content, breakCount)) {
             console.log("error");
-            return;
+            return false;
         }
+
+        return true;
     }
 
     /**
@@ -356,7 +367,6 @@
         const width = document.getElementById("width-input").value;
 
 
-
         if (hasErrorInBuild(height, width)) return;
 
         // form 전송 필드에 데이터 입력
@@ -385,7 +395,7 @@
      * 필드에 모드 설정
      */
     function set(x, y) {
-        switch(presentMode){
+        switch (presentMode) {
             case MODE_CANCEL:
                 map[x][y] = MODE_CANCEL;
                 break;
@@ -447,19 +457,19 @@
                 let mode = map[i][j];
                 switch (mode) {
                     case MODE_CANCEL:
-                        tr.innerHTML += "<td class='p-1 border-0'><button type='button' class='btn border-secondary rounded-0' style='height:40px; width:40px' onclick='set("+ i + "," + j + ")'></button></td>";
+                        tr.innerHTML += "<td class='p-1 border-0'><button type='button' class='btn border-secondary rounded-0' style='height:40px; width:40px' onclick='set(" + i + "," + j + ")'></button></td>";
                         break;
                     case MODE_BLOCK:
-                        tr.innerHTML += "<td class='p-1 border-0'><button type='button' class='btn btn-dark rounded-0' style='height:40px; width:40px;' onclick='set("+ i + "," + j + ")'></button></td>";
+                        tr.innerHTML += "<td class='p-1 border-0'><button type='button' class='btn btn-dark rounded-0' style='height:40px; width:40px;' onclick='set(" + i + "," + j + ")'></button></td>";
                         break;
                     case MODE_START:
-                        tr.innerHTML += "<td class='p-1 border-0'><button type='button' class='btn btn-primary rounded-0' style='height:40px; width:40px;' onclick='set("+ i + "," + j + ")'></button></td>";
+                        tr.innerHTML += "<td class='p-1 border-0'><button type='button' class='btn btn-primary rounded-0' style='height:40px; width:40px;' onclick='set(" + i + "," + j + ")'></button></td>";
                         break;
                     case MODE_GOAL:
-                        tr.innerHTML += "<td class='p-1 border-0'><button type='button' class='btn btn-danger rounded-0' style='height:40px; width:40px;' onclick='set("+ i + "," + j + ")'></button></td>";
+                        tr.innerHTML += "<td class='p-1 border-0'><button type='button' class='btn btn-danger rounded-0' style='height:40px; width:40px;' onclick='set(" + i + "," + j + ")'></button></td>";
                         break;
                     case MODE_PUSH:
-                        tr.innerHTML += "<td class='p-1 border-0'><button type='button' class='btn btn-warning rounded-0' style='height:40px; width:40px;' onclick='set("+ i + "," + j + ")'></button></td>";
+                        tr.innerHTML += "<td class='p-1 border-0'><button type='button' class='btn btn-warning rounded-0' style='height:40px; width:40px;' onclick='set(" + i + "," + j + ")'></button></td>";
                         break;
                 }
             }

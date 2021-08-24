@@ -13,7 +13,6 @@ import javax.validation.constraints.NotNull;
 public class MakerForm {
 
     @NotNull(message = "제목을 입력해주세요!")
-    @Min(value = 4, message = "제목을 4글자 이상 입력해주세요!")
     private String title;
 
     @NotBlank

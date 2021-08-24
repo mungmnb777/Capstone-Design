@@ -1,10 +1,310 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="fragments/header :: header">
     <meta charset="UTF-8">
-    <title>Title</title>
 </head>
 <body>
-test
+<div th:replace="fragments/bodyHeader :: bodyHeader"></div>
+<div th:replace="fragments/navigation :: navigation"></div>
+<div class="container">
+    <form id="save" th:action="@{/maps/save}" th:object="${form}" method="post">
+        <!--폼 전송 객체-->
+        <div>
+            <input type="text" th:field="*{title}" style="display:none" readonly>
+            <input type="text" th:field="*{content}" style="display:none" readonly>
+            <input type="text" th:field="*{height}" style="display:none" readonly>
+            <input type="text" th:field="*{width}" style="display:none" readonly>
+            <input type="text" th:field="*{breakCount}" style="display:none" readonly>
+        </div>
+        <div id="map-table" class="table d-inline-flex justify-content-center"></div>
+    </form>
+</div>
+<div th:replace="fragments/footer :: footer"></div>
+<script type="text/javascript">
+    // 모드 상수
+    const MODE_CANCEL = 0;
+    const MODE_BLOCK = 1;
+    const MODE_START = 2;
+    const MODE_GOAL = 3;
+    const MODE_PUSH = 4;
+    const MODE_BREAK = 5;
+
+    // 이동 상수
+    const UP = 38;
+    const DOWN = 40;
+    const LEFT = 37;
+    const RIGHT = 39;
+
+    // 맵 기본 정보
+    const content = document.getElementById("content").value;
+    const height = document.getElementById("height").value;
+    const width = document.getElementById("width").value;
+    let breakCount = document.getElementById("breakCount").value;
+
+    let map = [];
+    let pos;
+    window.onkeydown = function () {
+        move();
+    };
+
+    init();
+
+    /**
+     * 맵 데이터 초기화 및 테이블 생성
+     */
+    function init() {
+        // 시작 지점 세팅
+        pos = setPosition(MODE_START);
+
+        let count = 0;
+        // 맵 데이터 형식 변환
+        for (let i = 0; i < height; i++) {
+            let arr = []
+            for (let j = 0; j < width; j++) {
+                arr.push(parseInt(content.charAt(count++)));
+            }
+            map.push(arr);
+        }
+        createTable();
+    }
+
+    /**
+     * 위치 변수 초기화
+     */
+    function setPosition(mode) {
+        const target = content.indexOf(mode);
+
+        let findPosition = {
+            x: -1,
+            y: -1
+        }
+
+        findPosition.x = target % width;
+        findPosition.y = Math.floor(target / width);
+
+        return findPosition;
+    }
+
+    function setTargetPosition(x, y) {
+        if (map[y][x] === MODE_PUSH) {
+            return {
+                x: x,
+                y: y
+            }
+        }
+    }
+
+    /**
+     * 테이블 갱신
+     */
+    function createTable() {
+        const table = document.getElementById("map-table");
+        const tbody = document.createElement("tbody");
+
+        for (let i = 0; i < height; i++) {
+            const tr = document.createElement("tr");
+            tr.classList.add("border-white");
+            for (let j = 0; j < width; j++) {
+
+                let mode = map[i][j];
+
+                switch (mode) {
+                    case MODE_CANCEL:
+                        tr.innerHTML += "<td class='p-1 border-0'><button type='button' class='btn rounded-0' style='height:40px; width:40px; cursor:default'></button></td>";
+                        break;
+                    case MODE_BLOCK:
+                        tr.innerHTML += "<td class='p-1 border-0'><button type='button' class='btn btn-dark rounded-0' style='height:40px; width:40px' onclick='breakBlock(" + i + "," + j + ")'></button></td>";
+                        break;
+                    case MODE_START:
+                        tr.innerHTML += "<td class='p-1 border-0'><button type='button' class='btn btn-primary rounded-0' style='height:40px; width:40px; cursor:default'></button></td>";
+                        break;
+                    case MODE_GOAL:
+                        tr.innerHTML += "<td class='p-1 border-0'><button type='button' class='btn btn-danger rounded-0' style='height:40px; width:40px; cursor:default'></button></td>";
+                        break;
+                    case MODE_PUSH:
+                        tr.innerHTML += "<td class='p-1 border-0'><button type='button' class='btn btn-warning rounded-0' style='height:40px; width:40px; cursor:default;'></button></td>";
+                        break;
+                }
+            }
+            tbody.appendChild(tr);
+        }
+        while (table.hasChildNodes()) {
+            table.removeChild(table.firstChild);
+        }
+        table.appendChild(tbody);
+    }
+
+    /**
+     * 키보드 이벤트
+     */
+    function move() {
+        if (event.keyCode === UP) { // Up
+            this.moveUp();
+        } else if (event.keyCode === DOWN) { // Down
+            this.moveDown();
+        } else if (event.keyCode === RIGHT) { // Right
+            this.moveRight();
+        } else if (event.keyCode === LEFT) { // Left
+            this.moveLeft();
+        }
+        this.createTable();
+    }
+
+    function moveUp() {
+        // 위에 길이 없으면 이동 불가
+        if (pos.y - 1 < 0) return;
+
+        let target = map[pos.y - 1][pos.x];
+
+        // 이동할 곳에 장애물이 없는 경우
+        if (target === MODE_CANCEL) {
+            moveToDirection(UP);
+            // 이동할 곳에 밀 수 있는 장애물이 있는 경우
+        } else if (target === MODE_PUSH) {
+
+            const targetPosition = setTargetPosition(pos.x, pos.y - 1);
+
+            // 밀 수 있는 장애물 위에 길이 없는 경우
+            if (targetPosition.y - 1 < 0) return;
+
+            // 밀 수 있는 장애물 위에 장애물이 없는 경우
+            if (map[targetPosition.y - 1][targetPosition.x] === MODE_CANCEL) {
+                map[targetPosition.y - 1][targetPosition.x] = MODE_PUSH;
+                moveToDirection(UP);
+            }
+        } else if (target === MODE_GOAL) {
+            clearTest();
+        }
+
+        createTable();
+    }
+
+    function moveDown() {
+        // 위에 길이 없으면 이동 불가
+        if (pos.y + 1 >= height) return;
+
+        let target = map[pos.y + 1][pos.x];
+
+        // 이동할 곳에 장애물이 없는 경우
+        if (target === MODE_CANCEL) {
+            moveToDirection(DOWN);
+            // 이동할 곳에 밀 수 있는 장애물이 있는 경우
+        } else if (target === MODE_PUSH) {
+
+            const targetPosition = setTargetPosition(pos.x, pos.y + 1);
+
+            // 밀 수 있는 장애물 위에 길이 없는 경우
+            if (targetPosition.y + 1 >= height) return;
+
+            // 밀 수 있는 장애물 위에 장애물이 없는 경우
+            if (map[targetPosition.y + 1][targetPosition.x] === MODE_CANCEL) {
+                map[targetPosition.y + 1][targetPosition.x] = MODE_PUSH;
+                moveToDirection(DOWN);
+            }
+        } else if (target === MODE_GOAL) {
+            clearTest();
+        }
+
+        createTable();
+    }
+
+    function moveLeft() {
+        // 위에 길이 없으면 이동 불가
+        if (pos.x - 1 < 0) return;
+
+        let target = map[pos.y][pos.x - 1];
+
+        // 이동할 곳에 장애물이 없는 경우
+        if (target === MODE_CANCEL) {
+            moveToDirection(LEFT);
+            // 이동할 곳에 밀 수 있는 장애물이 있는 경우
+        } else if (target === MODE_PUSH) {
+
+            const targetPosition = setTargetPosition(pos.x - 1, pos.y);
+
+            // 밀 수 있는 장애물 위에 길이 없는 경우
+            if (targetPosition.x - 1 < 0) return;
+
+            // 밀 수 있는 장애물 위에 장애물이 없는 경우
+            if (map[targetPosition.y][targetPosition.x - 1] === MODE_CANCEL) {
+                map[targetPosition.y][targetPosition.x - 1] = MODE_PUSH;
+                moveToDirection(LEFT);
+            }
+        } else if (target === MODE_GOAL) {
+            clearTest();
+        }
+
+        createTable();
+    }
+
+    function moveRight() {
+        // 위에 길이 없으면 이동 불가
+        if (pos.x + 1 >= width) return;
+
+        let target = map[pos.y][pos.x + 1];
+
+        // 이동할 곳에 장애물이 없는 경우
+        if (target === MODE_CANCEL) {
+            moveToDirection(RIGHT);
+            // 이동할 곳에 밀 수 있는 장애물이 있는 경우
+        } else if (target === MODE_PUSH) {
+
+            const targetPosition = setTargetPosition(pos.x + 1, pos.y);
+
+            // 밀 수 있는 장애물 위에 길이 없는 경우
+            if (targetPosition.x + 1 >= width) return;
+
+            // 밀 수 있는 장애물 위에 장애물이 없는 경우
+            if (map[targetPosition.y][targetPosition.x + 1] === MODE_CANCEL) {
+                map[targetPosition.y][targetPosition.x + 1] = MODE_PUSH;
+                moveToDirection(RIGHT);
+            }
+        } else if (target === MODE_GOAL) {
+            clearTest();
+        }
+
+        createTable();
+    }
+
+    function moveToDirection(direction) {
+        switch (direction) {
+            case UP:
+                map[pos.y - 1][pos.x] = MODE_START;
+                map[pos.y][pos.x] = MODE_CANCEL;
+                pos.y--;
+                break;
+
+            case DOWN:
+                map[pos.y + 1][pos.x] = 2;
+                map[pos.y][pos.x] = 0;
+                pos.y++;
+                break;
+
+            case LEFT:
+                map[pos.y][pos.x - 1] = 2;
+                map[pos.y][pos.x] = 0;
+                pos.x--;
+                break;
+
+            case RIGHT:
+                map[pos.y][pos.x + 1] = 2;
+                map[pos.y][pos.x] = 0;
+                pos.x++;
+                break;
+        }
+    }
+
+    function breakBlock(x, y) {
+        if(breakCount <= 0) return;
+
+        map[x][y] = MODE_CANCEL;
+        breakCount--;
+        createTable();
+    }
+
+    function clearTest() {
+        document.getElementById("save").submit();
+    }
+</script>
 </body>
 </html>
