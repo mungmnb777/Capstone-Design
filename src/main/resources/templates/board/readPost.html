@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="fragments/header :: header">
+    <meta charset="UTF-8">
+</head>
+<body>
+<div th:replace="fragments/bodyHeader :: bodyHeader"></div>
+<div th:replace="fragments/navigation :: navigation"></div>
+<div class="container" style="max-width:600px">
+    <form th:action th:object="${post}" method="post">
+        <div class="py-1 form-group">
+            <label class="form-check-label" for="title">제목</label>
+            <input type="text" class="form-control" id="title" th:field="*{title}" placeholder="제목을 입력하세요." readonly>
+        </div>
+        <div class="py-1 form-group">
+            <label class="form-check-label" for="content">내용</label>
+            <textarea class="form-control" id="content" th:field="*{content}" rows="10" readonly></textarea>
+        </div>
+    </form>
+    <div th:if="${session.loginId == post.member.id}" class="d-flex flex-row justify-content-center">
+        <div class="p-1">
+            <a th:href="@{/board/list/{postId}/update(postId = ${post.id})}">
+                <button class="btn btn-outline-secondary">수정</button>
+            </a>
+        </div>
+        <div class="p-1">
+            <a th:href="@{/board/list/{postId}/delete(postId = ${post.id})}">
+                <button class="btn btn-outline-danger">삭제</button>
+            </a>
+        </div>
+    </div>
+</div>
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>

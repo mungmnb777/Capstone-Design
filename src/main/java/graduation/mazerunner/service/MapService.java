@@ -1,12 +1,16 @@
 package graduation.mazerunner.service;
 
+import graduation.mazerunner.Paging;
 import graduation.mazerunner.constant.ModeConst;
 import graduation.mazerunner.domain.Map;
+import graduation.mazerunner.domain.Ranking;
 import graduation.mazerunner.repository.MapRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -33,13 +37,33 @@ public class MapService {
         return mapRepository.save(map);
     }
 
-    public Map load(Map map) {
-        Map findMap = mapRepository.findOne(map.getId());
+    public Map load(Long id) {
+        Map findMap = mapRepository.findOne(id);
 
         if (findMap == null) {
             throw new RuntimeException("맵 정보가 존재하지 않습니다.");
         }
 
+        findMap.setHit(findMap.getHit() + 1);
+
         return findMap;
+    }
+
+    public Map findOne(Long id) {
+        return mapRepository.findOne(id);
+    }
+
+    public Long findMapsCount() {
+        return mapRepository.findMapsCount();
+    }
+
+    // 게임 클리어
+    public void clear(Long id, Ranking ranking) {
+        Map findMap = mapRepository.findOne(id);
+        findMap.getRankings().add(ranking);
+    }
+
+    public List<Map> findPerPage(Paging paging) {
+        return mapRepository.findPerPage(paging);
     }
 }

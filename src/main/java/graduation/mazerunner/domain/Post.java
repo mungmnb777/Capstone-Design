@@ -1,9 +1,6 @@
 package graduation.mazerunner.domain;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
@@ -24,12 +21,14 @@ public class Post {
     /**
      * 게시글 제목
      */
+    @Setter
     @Column(name = "post_title")
     private String title;
 
     /**
      * 게시글 내용
      */
+    @Setter
     @Column(name = "post_content")
     private String content;
 
@@ -46,6 +45,18 @@ public class Post {
     private LocalDateTime udate;
 
     /**
+     * 조회수
+     */
+    @Setter
+    private int hit;
+
+    /**
+     * 추천수
+     */
+    @Setter
+    private int recommend;
+
+    /**
      * 게시글 작성자
      */
     @ManyToOne(fetch = FetchType.LAZY)
@@ -60,11 +71,13 @@ public class Post {
 
     @Builder
     public Post(Long id, String title, String content,
-                LocalDateTime cdate, Member member, List<Reply> replyList) {
+                LocalDateTime cdate, int hit, int recommend, Member member, List<Reply> replyList) {
         this.id = id;
         this.title = title;
         this.content = content;
         this.cdate = cdate;
+        this.hit = hit;
+        this.recommend = recommend;
         this.member = member;
         this.replyList = replyList;
     }

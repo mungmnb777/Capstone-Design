@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="fragments/header :: header">
+    <meta charset="UTF-8">
+</head>
+<body>
+<div th:replace="fragments/bodyHeader :: bodyHeader"></div>
+<div th:replace="fragments/navigation :: navigation"></div>
+<div class="container" style="max-width:600px">
+    <h2 class="text-center">게시글 작성</h2>
+    <form th:action th:object="${form}" method="post">
+        <div class="py-1 form-group">
+            <label class="form-check-label" for="title">제목</label>
+            <input type="text" class="form-control" id="title" th:field="*{title}"
+                   th:errorclass="field-error" placeholder="제목을 입력하세요.">
+            <div class="field-error" th:errors="*{title}">
+                TITLE ERROR
+            </div>
+        </div>
+        <div class="py-1 form-group">
+            <label class="form-check-label" for="content">내용</label>
+            <textarea class="form-control" id="content" th:field="*{content}"
+                      th:errorclass="field-error" rows="10"></textarea>
+            <div class="field-error" th:errors="*{content}">
+                CONTENT ERROR
+            </div>
+        </div>
+        <div class="py-1">
+            <button type="submit" class="btn btn-outline-secondary">작성</button>
+        </div>
+    </form>
+</div>
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>

@@ -1,9 +1,6 @@
 package graduation.mazerunner.domain;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -57,6 +54,19 @@ public class Map {
      * 부수기 횟수
      */
     private int breakCount;
+
+    /**
+     * 조회수
+     */
+    @Setter
+    private int hit;
+
+    /**
+     * 추천수
+     */
+    @Setter
+    private int recommend;
+
     /**
      * 게임 제작자 ID
      */
@@ -73,7 +83,7 @@ public class Map {
 
     @Builder
     public Map(Long id, String title, String content, LocalDateTime cdate,
-               int height, int width, int breakCount, Member member, List<Ranking> rankings) {
+               int height, int width, int breakCount, int hit, int recommend, Member member, List<Ranking> rankings) {
         this.id = id;
         this.title = title;
         this.content = content;
@@ -81,6 +91,8 @@ public class Map {
         this.height = height;
         this.width = width;
         this.breakCount = breakCount;
+        this.hit = hit;
+        this.recommend = recommend;
         this.member = member;
         this.rankings = rankings;
     }

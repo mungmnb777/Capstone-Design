@@ -7,29 +7,55 @@
 <div th:replace="fragments/bodyHeader :: bodyHeader"></div>
 <div th:replace="fragments/navigation :: navigation"></div>
 <div class="container">
-    <form id="save" th:action="@{/maps/save}" th:object="${form}" method="post">
-        <!--폼 전송 객체-->
-        <div>
-            <input type="text" th:field="*{title}" style="display:none" readonly>
-            <input type="text" th:field="*{content}" style="display:none" readonly>
-            <input type="text" th:field="*{height}" style="display:none" readonly>
-            <input type="text" th:field="*{width}" style="display:none" readonly>
-            <input type="text" th:field="*{breakCount}" style="display:none" readonly>
-        </div>
-    </form>
-    <div class="p-1 d-flex flex-row justify-content-center">
-        <h4>클리어가 가능한 게임인지 테스트 후 저장됩니다.</h4>
+    <!--불러온 맵 정보 필드-->
+    <div th:object="${map}">
+        <input type="text" th:field="*{title}" style="display:none" readonly>
+        <input type="text" th:field="*{content}" style="display:none" readonly>
+        <input type="text" th:field="*{height}" style="display:none" readonly>
+        <input type="text" th:field="*{width}" style="display:none" readonly>
+        <input type="text" th:field="*{breakCount}" style="display:none" readonly>
     </div>
+    <div th:object="${member}">
+        <input type="text" th:field="*{id}" style="display:none" readonly>
+        <input type="text" th:field="*{nickname}" style="display:none" readonly>
+    </div>
+    <form id="save" th:action method="post">
+        <!--폼 전송 객체-->
+        <input type="text" id="timer" name="timer" style="display:none" readonly>
+    </form>
+    <!--꿀팁 출력-->
     <div class="p-1 d-flex flex-row justify-content-center">
-        <p>파란색 상자를 빨간색 상자로 이동시켜주세요!</p>
+        <p>GAME START 버튼을 눌러주시면 게임이 시작됩니다!</p>
+    </div>
+    <!--시작 버튼-->
+    <div id="start-button" class="p-1 d-flex justify-content-center">
+        <button type="button" class="btn btn-outline-secondary" onclick="start()">GAME START</button>
+    </div>
+    <!--타이머-->
+    <div id="timer-form" class="p-1 d-flex justify-content-center">
+        00:00.00
+    </div>
+    <!--게임 테이블-->
+    <div id="map" class="p-1" style="display:none">
+        <table id="map-table" class="table d-inline-flex justify-content-center"></table>
     </div>
     <div class="p-1">
-        <table id="map-table" class="table d-inline-flex justify-content-center">
+        <table class="table table-hover d-flex justify-content-center">
+            <tr>
+                <th style="width:60px">순위</th>
+                <th style="width:200px">닉네임</th>
+                <th style="width:200px">클리어 시간</th>
+            </tr>
+            <tr th:each="ranking: ${rankings}">
+                <td th:text="${rankingStat.count}"></td>
+                <td th:text="${ranking.member.getNickname()}"></td>
+                <td th:text="${ranking.timer}"></td>
+            </tr>
         </table>
     </div>
 </div>
 <div th:replace="fragments/footer :: footer"></div>
-<script type="text/javascript">
+<script type="text/javascript" th:inline="javascript">
     // 모드 상수
     const MODE_CANCEL = 0;
     const MODE_BLOCK = 1;
@@ -50,8 +76,16 @@
     const width = document.getElementById("width").value;
     let breakCount = document.getElementById("breakCount").value;
 
+    // 게임 중인가?
+    let isPlaying = false;
+
+    // 타이머 컨트롤러(interval 실행 및 중지)
+    let intervalVar;
+
     let map = [];
     let pos;
+    let timer = 0;
+
     window.onkeydown = function () {
         move();
     };
@@ -77,6 +111,31 @@
         createTable();
     }
 
+    /**
+     * 게임 시작
+     */
+    function start() {
+        isPlaying = true;
+
+        increaseTimer();
+        document.getElementById("map").style.display = "block";
+    }
+
+    function increaseTimer() {
+        intervalVar = setInterval(function(){
+            timer++;
+            document.getElementById("timer-form").innerText = getTimerToFormat(timer);
+        }, 10)
+    }
+
+    function getTimerToFormat(time) {
+
+        let min = Math.floor(time / 6000);
+        let sec = Math.floor(time / 100) % 60;
+        let ms = time % 100;
+
+        return `${min < 10 ? `0${min}` : min}:${sec < 10 ? `0${sec}` : sec}.${ms < 10 ? `0${ms}` : ms}`;
+    }
     /**
      * 위치 변수 초기화
      */
@@ -147,6 +206,8 @@
      * 키보드 이벤트
      */
     function move() {
+        if (isPlaying === false) return;
+
         if (event.keyCode === UP) { // Up
             this.moveUp();
         } else if (event.keyCode === DOWN) { // Down
@@ -182,7 +243,7 @@
                 moveToDirection(UP);
             }
         } else if (target === MODE_GOAL) {
-            clearTest();
+            clear();
         }
 
         createTable();
@@ -211,7 +272,7 @@
                 moveToDirection(DOWN);
             }
         } else if (target === MODE_GOAL) {
-            clearTest();
+            clear();
         }
 
         createTable();
@@ -240,7 +301,7 @@
                 moveToDirection(LEFT);
             }
         } else if (target === MODE_GOAL) {
-            clearTest();
+            clear();
         }
 
         createTable();
@@ -269,7 +330,7 @@
                 moveToDirection(RIGHT);
             }
         } else if (target === MODE_GOAL) {
-            clearTest();
+            clear();
         }
 
         createTable();
@@ -304,14 +365,22 @@
     }
 
     function breakBlock(x, y) {
-        if(breakCount <= 0) return;
+        if (breakCount <= 0) return;
 
         map[x][y] = MODE_CANCEL;
         breakCount--;
         createTable();
     }
 
-    function clearTest() {
+    function clear() {
+        if(isPlaying === false) return;
+        isPlaying = false;
+
+        // 타이머 종료 및 전송 객체에 타이머 수치 저장
+        clearInterval(intervalVar);
+        document.getElementById("timer").value = timer;
+
+        // 전송
         document.getElementById("save").submit();
     }
 </script>

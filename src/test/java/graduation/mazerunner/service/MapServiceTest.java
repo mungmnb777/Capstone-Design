@@ -76,15 +76,11 @@ class MapServiceTest {
 
         Long savedId = mapService.save(savedMap);
 
-        Map loadMap = Map.builder()
-                .id(savedId)
-                .build();
-
         // when
-        Map findMap = mapService.load(loadMap);
+        Map findMap = mapService.load(savedId);
 
         // then
-        assertThat(loadMap.getId()).isEqualTo(findMap.getId());
+        assertThat(savedId).isEqualTo(findMap.getId());
         assertThat(savedMap.getContent()).isEqualTo(findMap.getContent());
         assertThat(savedMap.getHeight()).isEqualTo(findMap.getHeight());
         assertThat(savedMap.getWidth()).isEqualTo(findMap.getWidth());
@@ -99,15 +95,9 @@ class MapServiceTest {
                 .height(3)
                 .width(3)
                 .build();
-
-        Long savedId = mapService.save(savedMap);
-
-        Map loadMap = Map.builder()
-                .id(204L)
-                .build();
         // when
 
         // then
-        assertThrows(RuntimeException.class, () -> mapService.load(loadMap));
+        assertThrows(RuntimeException.class, () -> mapService.load(204L));
     }
 }

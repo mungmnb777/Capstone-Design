@@ -12,7 +12,7 @@
             </li>
         </ul>
     </div>
-    <div class="pb-3 container-fluid" th:if="${session.loginMember} != null">
+    <div class="pb-3 container" th:if="${session.loginMember} != null">
         <ul class="nav justify-content-end">
             <li class="nav-item">
                 <a class="nav-link active text-dark" th:href="@{/members/logout}">LOGOUT</a>
