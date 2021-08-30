@@ -1,9 +1,6 @@
 package graduation.mazerunner.domain;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
@@ -11,11 +8,13 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class FriendRequest {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "req_id")
     private Long id;
 
@@ -45,12 +44,4 @@ public class FriendRequest {
     @Enumerated(EnumType.STRING)
     private RequestStatus status;
 
-    @Builder
-    public FriendRequest(Long id, Member member, Member friend, LocalDateTime date, RequestStatus status) {
-        this.id = id;
-        this.member = member;
-        this.friend = friend;
-        this.date = date;
-        this.status = status;
-    }
 }

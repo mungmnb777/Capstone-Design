@@ -29,7 +29,7 @@ public class PostService {
             throw new RuntimeException("게시글 정보가 존재하지 않습니다.");
         }
 
-        findPost.setHit(findPost.getHit() + 1);
+        findPost.increaseHit();
 
         return findPost;
     }
@@ -49,8 +49,8 @@ public class PostService {
     public Long update(Post post) {
         Post findPost = postRepository.findOne(post.getId());
 
-        findPost.setTitle(post.getTitle());
-        findPost.setContent(post.getContent());
+        findPost.changeTitle(post.getTitle());
+        findPost.changeContent(post.getContent());
 
         return findPost.getId();
     }

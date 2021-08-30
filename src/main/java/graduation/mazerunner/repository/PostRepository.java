@@ -3,11 +3,9 @@ package graduation.mazerunner.repository;
 import graduation.mazerunner.Paging;
 import graduation.mazerunner.domain.Post;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import java.util.List;
 
 @Repository

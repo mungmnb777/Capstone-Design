@@ -120,7 +120,11 @@ public class MapController {
     }
 
     @PostMapping("/list/{mapId}")
-    public String clearGame(@PathVariable("mapId") Long id, @RequestParam("timer") int timer ,HttpSession session) {
+    public String clearGame(@PathVariable("mapId") Long id, @RequestParam("timer") int timer, HttpSession session) {
+        if (session.getAttribute(SessionConst.LOGIN_MEMBER) == null) {
+            return "redirect:/maps/list";
+        }
+
         Map findMap = mapService.findOne(id);
 
         Ranking ranking = Ranking.builder()
@@ -129,8 +133,16 @@ public class MapController {
                 .timer(timer)
                 .build();
 
-        mapService.clear(id, ranking);
+        mapService.insertRanking(id, ranking);
+        mapService.cleanRank(id, ranking);
 
         return "redirect:/maps/list";
     }
+
+    @GetMapping("/list/{mapId}/delete")
+    public String deletePost(@PathVariable("mapId") Long id) {
+        mapService.delete(id);
+        return "redirect:/maps/list";
+    }
 }
+

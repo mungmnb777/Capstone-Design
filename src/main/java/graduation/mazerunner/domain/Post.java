@@ -10,18 +10,19 @@ import java.util.List;
 
 @Entity
 @Getter
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Post {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "post_id")
     private Long id;
 
     /**
      * 게시글 제목
      */
-    @Setter
     @Column(name = "post_title")
     private String title;
 
@@ -47,13 +48,11 @@ public class Post {
     /**
      * 조회수
      */
-    @Setter
     private int hit;
 
     /**
      * 추천수
      */
-    @Setter
     private int recommend;
 
     /**
@@ -67,18 +66,25 @@ public class Post {
      * 댓글 목록
      */
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
-    private List<Reply> replyList = new ArrayList<>();
+    private final List<Reply> replyList = new ArrayList<>();
 
-    @Builder
-    public Post(Long id, String title, String content,
-                LocalDateTime cdate, int hit, int recommend, Member member, List<Reply> replyList) {
-        this.id = id;
+    public void increaseHit() {
+        this.hit++;
+    }
+
+    public void increaseRecommend() {
+        this.recommend++;
+    }
+
+    public void decreaseRecommend() {
+        this.recommend--;
+    }
+
+    public void changeTitle(String title) {
         this.title = title;
+    }
+
+    public void changeContent(String content) {
         this.content = content;
-        this.cdate = cdate;
-        this.hit = hit;
-        this.recommend = recommend;
-        this.member = member;
-        this.replyList = replyList;
     }
 }

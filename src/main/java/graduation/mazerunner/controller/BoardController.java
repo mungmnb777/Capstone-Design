@@ -70,8 +70,8 @@ public class BoardController {
         return "redirect:/board/list";
     }
 
-    @GetMapping("/list/{mapId}")
-    public String readPost(@PathVariable("mapId") Long id, Model model) {
+    @GetMapping("/list/{postId}")
+    public String readPost(@PathVariable("postId") Long id, Model model) {
 
         // 조회수를 증가시키기 위해 load Method 사용
         Post findPost = postService.load(id);
@@ -81,8 +81,8 @@ public class BoardController {
         return "board/readPost";
     }
 
-    @GetMapping("/list/{mapId}/update")
-    public String updatePostForm(@ModelAttribute("mapId") Long id, Model model) {
+    @GetMapping("/list/{postId}/update")
+    public String updatePostForm(@PathVariable("postId") Long id, Model model) {
 
         // 단순 조회(조회수 증가x)
         Post findPost = postService.findOne(id);
@@ -96,9 +96,9 @@ public class BoardController {
         return "board/updatePost";
     }
 
-    @PostMapping("/list/{mapId}/update")
+    @PostMapping("/list/{postId}/update")
     public String updatePost(@Validated @ModelAttribute("form") PostForm form, BindingResult bindingResult,
-                             @PathVariable("mapId") Long id) {
+                             @PathVariable("postId") Long id) {
 
         if (bindingResult.hasErrors()) {
             return "board/updatePost";
@@ -115,8 +115,8 @@ public class BoardController {
         return "redirect:/board/list/" + id;
     }
 
-    @GetMapping("/list/{mapId}/delete")
-    public String deletePost(@PathVariable("mapId") Long id) {
+    @GetMapping("/list/{postId}/delete")
+    public String deletePost(@PathVariable("postId") Long id) {
         postService.delete(id);
 
         return "redirect:/board/list";

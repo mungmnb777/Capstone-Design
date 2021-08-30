@@ -1,21 +1,19 @@
 package graduation.mazerunner.domain;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Reply {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "reply_id")
     private Long id;
 
@@ -59,12 +57,4 @@ public class Reply {
         post.getReplyList().add(this);
     }
 
-    @Builder
-    public Reply(Long id, String content, LocalDateTime cdate, Post post, Member member) {
-        this.id = id;
-        this.content = content;
-        this.cdate = cdate;
-        this.post = post;
-        this.member = member;
-    }
 }

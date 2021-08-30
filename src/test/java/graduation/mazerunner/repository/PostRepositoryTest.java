@@ -27,7 +27,6 @@ class PostRepositoryTest {
         // given
         Post post = Post.builder()
                 .title("안녕")
-                .replyList(new ArrayList<>())
                 .build();
 
         Reply reply = Reply.builder()

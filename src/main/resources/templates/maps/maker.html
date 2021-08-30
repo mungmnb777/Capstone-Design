@@ -201,7 +201,8 @@
         // 모드 버튼 ID를 이용해 div 엘리먼트 가져오기
         const e = document.getElementById(id);
 
-        if (e.style.display == "none") {
+
+        if (e.style.display === "none") {
             e.style.display = "block";
         }
     }
@@ -216,7 +217,7 @@
         // 모드 버튼 ID를 이용해 div 엘리먼트 가져오기
         const e = document.getElementById(id);
 
-        if (e.style.display == "block") {
+        if (e.style.display === "block") {
             e.style.display = "none";
         }
     }
@@ -225,14 +226,15 @@
      * 현재 사용 중인 모드 설정
      */
     function modeOnClick(mode) {
+
         presentMode = mode;
 
-        if (mode == MODE_BREAK) {
+        if (mode === MODE_BREAK) {
             let count = prompt("0이상 900이하의 값을 입력해주세요!");
             while (isNaN(parseInt(count, 10)) || count < 0 || count > 900) {
                 count = prompt("잘못된 값입니다! 다시 입력해주세요!")
 
-                if (count == null) return;
+                if (count === null) return;
             }
             document.getElementById("breakCount").value = count;
         }
@@ -274,11 +276,11 @@
         }
 
         // 맵 에러 체크
-        if (content.indexOf(MODE_START) == -1) {
+        if (content.indexOf(MODE_START) === -1) {
             document.getElementById("global-error").style.display = "block";
             document.getElementById("start-null-error").style.display = "block";
             result = true;
-        } else if (content.indexOf(MODE_GOAL) == -1) {
+        } else if (content.indexOf(MODE_GOAL) === -1) {
             document.getElementById("global-error").style.display = "block";
             document.getElementById("goal-null-error").style.display = "block";
             result = true;
@@ -403,7 +405,7 @@
                 map[x][y] = MODE_BLOCK;
                 break;
             case MODE_START:
-                if (presentStartPosition.x == -1 && presentStartPosition.y == -1) {
+                if (presentStartPosition.x === -1 && presentStartPosition.y === -1) {
                     presentStartPosition.x = x;
                     presentStartPosition.y = y;
 
@@ -417,7 +419,7 @@
                 }
                 break;
             case MODE_GOAL:
-                if (presentGoalPosition.x == -1 && presentGoalPosition.y == -1) {
+                if (presentGoalPosition.x === -1 && presentGoalPosition.y === -1) {
                     map[x][y] = MODE_GOAL;
 
                     presentGoalPosition.x = x;

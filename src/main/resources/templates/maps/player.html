@@ -37,6 +37,15 @@
     </div>
     <!--게임 테이블-->
     <div id="map" class="p-1" style="display:none">
+        <hr>
+        <div class="d-flex flex-row justify-content-center">
+            <div class="pe-1">
+                <p>BREAK COUNT : </p>
+            </div>
+            <div>
+                <p id="remain-break-count"></p>
+            </div>
+        </div>
         <table id="map-table" class="table d-inline-flex justify-content-center"></table>
     </div>
     <div class="p-1">
@@ -49,9 +58,16 @@
             <tr th:each="ranking: ${rankings}">
                 <td th:text="${rankingStat.count}"></td>
                 <td th:text="${ranking.member.getNickname()}"></td>
-                <td th:text="${ranking.timer}"></td>
+                <td th:id="|timer-${rankingStat.count}|" th:text="${ranking.timer}"></td>
             </tr>
         </table>
+    </div>
+    <div th:if="${session.loginId == map.member.id}" class="d-flex flex-row justify-content-center">
+        <div class="p-1">
+            <a th:href="@{/maps/list/{mapId}/delete(mapId = ${map.id})}">
+                <button class="btn btn-outline-danger">삭제</button>
+            </a>
+        </div>
     </div>
 </div>
 <div th:replace="fragments/footer :: footer"></div>
@@ -88,6 +104,7 @@
 
     window.onkeydown = function () {
         move();
+        return false;
     };
 
     init();
@@ -108,6 +125,8 @@
             }
             map.push(arr);
         }
+
+        rankingsTimerFormat();
         createTable();
     }
 
@@ -117,10 +136,27 @@
     function start() {
         isPlaying = true;
 
+        showBreakCount(breakCount);
         increaseTimer();
         document.getElementById("map").style.display = "block";
     }
 
+    function rankingsTimerFormat() {
+
+        for (let i = 1; i <= 10; i++) {
+            let timer = document.getElementById("timer-" + i);
+
+            if(timer == null) return;
+            timer.innerText = getTimerToFormat(timer.textContent);
+        }
+    }
+
+    // 브레이크 카운트 사용자에게 출력
+    function showBreakCount(breakCount) {
+        document.getElementById("remain-break-count").innerText = breakCount;
+    }
+
+    // 타이머 증가
     function increaseTimer() {
         intervalVar = setInterval(function(){
             timer++;
@@ -369,6 +405,7 @@
 
         map[x][y] = MODE_CANCEL;
         breakCount--;
+        showBreakCount(breakCount);
         createTable();
     }
 
@@ -379,6 +416,9 @@
         // 타이머 종료 및 전송 객체에 타이머 수치 저장
         clearInterval(intervalVar);
         document.getElementById("timer").value = timer;
+
+        // 사용자 알림
+        alert("클리어하셨습니다! 클리어 시간은 " + getTimerToFormat(timer) + "입니다.")
 
         // 전송
         document.getElementById("save").submit();

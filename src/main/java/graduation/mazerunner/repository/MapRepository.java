@@ -34,4 +34,9 @@ public class MapRepository {
                 .setMaxResults(paging.getPostPerPage())
                 .getResultList();
     }
+
+    public void delete(Long id) {
+        Map map = em.find(Map.class, id);
+        em.remove(map);
+    }
 }

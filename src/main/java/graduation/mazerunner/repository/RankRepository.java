@@ -3,11 +3,13 @@ package graduation.mazerunner.repository;
 import graduation.mazerunner.domain.Map;
 import graduation.mazerunner.domain.Ranking;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import java.util.List;
 
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class RankRepository {

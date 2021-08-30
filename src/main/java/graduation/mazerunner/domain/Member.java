@@ -1,20 +1,18 @@
 package graduation.mazerunner.domain;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Transient;
-import javax.validation.constraints.NotEmpty;
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Member {
 
     /**
@@ -52,13 +50,4 @@ public class Member {
     @Column(name = "member_udate")
     private LocalDateTime udate;
 
-    @Builder
-    public Member(String id, String password, String passwordCheck,
-                  String nickname, LocalDateTime cdate) {
-        this.id = id;
-        this.password = password;
-        this.passwordCheck = passwordCheck;
-        this.nickname = nickname;
-        this.cdate = cdate;
-    }
 }

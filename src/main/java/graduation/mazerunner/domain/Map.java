@@ -9,10 +9,12 @@ import java.util.List;
 
 @Entity
 @Getter
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Map {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "map_id")
     private Long id;
 
@@ -58,13 +60,11 @@ public class Map {
     /**
      * 조회수
      */
-    @Setter
     private int hit;
 
     /**
      * 추천수
      */
-    @Setter
     private int recommend;
 
     /**
@@ -77,23 +77,19 @@ public class Map {
     /**
      * 게임 랭크 리스트
      */
-    @OneToMany(mappedBy = "map", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "map", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Ranking> rankings = new ArrayList<>();
 
 
-    @Builder
-    public Map(Long id, String title, String content, LocalDateTime cdate,
-               int height, int width, int breakCount, int hit, int recommend, Member member, List<Ranking> rankings) {
-        this.id = id;
-        this.title = title;
-        this.content = content;
-        this.cdate = cdate;
-        this.height = height;
-        this.width = width;
-        this.breakCount = breakCount;
-        this.hit = hit;
-        this.recommend = recommend;
-        this.member = member;
-        this.rankings = rankings;
+    public void increaseHit() {
+        this.hit++;
+    }
+
+    public void increaseRecommend() {
+        this.recommend++;
+    }
+
+    public void decreaseRecommend() {
+        this.recommend--;
     }
 }
