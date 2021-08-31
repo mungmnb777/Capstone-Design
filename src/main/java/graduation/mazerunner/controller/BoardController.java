@@ -72,10 +72,12 @@ public class BoardController {
     }
 
     @GetMapping("/list/{postId}")
-    public String readPost(@PathVariable("postId") Long id, Model model) {
+    public String readPost(@PathVariable("postId") Long id, Model model, HttpSession session) {
 
         // 조회수를 증가시키기 위해 load Method 사용
         Post findPost = postService.load(id);
+
+        log.info("1={}",session.getAttribute(SessionConst.LOGIN_IDaiosdmasdiasdio));
 
         model.addAttribute("post", findPost);
 

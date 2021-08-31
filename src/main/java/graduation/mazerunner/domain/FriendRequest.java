@@ -3,7 +3,6 @@ package graduation.mazerunner.domain;
 import lombok.*;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
 import java.time.LocalDateTime;
 
 @Entity
@@ -41,6 +40,7 @@ public class FriendRequest {
     /**
      * 요청 상태
      */
+    @Column(name = "req_status")
     @Enumerated(EnumType.STRING)
     private RequestStatus status;
 

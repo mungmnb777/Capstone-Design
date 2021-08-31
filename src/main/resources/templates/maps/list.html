@@ -16,6 +16,7 @@
                 <th style="width:200px">제작자</th>
                 <th style="width:200px">날짜</th>
                 <th style="width:80px">조회수</th>
+                <th style="width:80px">추천수</th>
             </tr>
             <tr th:each="map : ${mapList}">
                 <td th:text="${map.id}"></td>
@@ -23,6 +24,7 @@
                 <td th:text="${map.member.getNickname()}"></td>
                 <td th:text="${#temporals.format(map.cdate, 'yyyy-MM-dd HH:mm')}"></td>
                 <td th:text="${map.hit}"></td>
+                <td th:text="${map.recommend}"></td>
             </tr>
         </table>
     </div>
