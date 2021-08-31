@@ -251,49 +251,65 @@
         return false;
     }
 
+    function displayElement(id) {
+        document.getElementById(id).style.display = "block";
+    }
+
+    function blindElement(id) {
+        document.getElementById(id).style.display = "none";
+    }
+
+    function displayErrorMessage(id) {
+        document.getElementById(id).classList.add("field-error");
+    }
+
+    function blindErrorMessage(id) {
+        document.getElementById(id).classList.remove("field-error");
+    }
+
     /**
      * 테스트 전 에러 체크
      */
     function hasErrorBeforeSave(title, content, breakCount) {
         let result = false;
 
-        document.getElementById("title-type-error").style.display = "none";
-        document.getElementById("title-range-error").style.display = "none";
-        document.getElementById("title").classList.remove("field-error");
-        document.getElementById("start-null-error").style.display = "none";
-        document.getElementById("goal-null-error").style.display = "none";
-        document.getElementById("global-error").style.display = "none";
+        blindElement("title-type-error");
+        blindElement("title-range-error");
+        blindElement("start-null-error");
+        blindElement("global-error");
+        blindElement("goal-null-error");
+        blindErrorMessage("title")
 
         // 제목 에러 체크
         if (isEmpty(title)) {
-            document.getElementById("title").classList.add("field-error");
-            document.getElementById("title-type-error").style.display = "block";
+            displayErrorMessage("title");
+            displayElement("title-type-error");
             result = true;
         } else if (title.length < 4) {
-            document.getElementById("title").classList.add("field-error");
-            document.getElementById("title-range-error").style.display = "block";
+            displayErrorMessage("title");
+            displayElement("title-range-error");
             result = true;
         }
 
         // 맵 에러 체크
         if (content.indexOf(MODE_START) === -1) {
-            document.getElementById("global-error").style.display = "block";
-            document.getElementById("start-null-error").style.display = "block";
+            displayElement("global-error");
+            displayElement("start-null-error");
             result = true;
         } else if (content.indexOf(MODE_GOAL) === -1) {
-            document.getElementById("global-error").style.display = "block";
-            document.getElementById("goal-null-error").style.display = "block";
+            displayElement("global-error");
+            displayElement("goal-null-error");
             result = true;
         }
 
         // breakCount 에러 체크
         if (isNaN(parseInt(breakCount, 10))) {
-            document.getElementById("global-error").style.display = "block";
-            document.getElementById("break-type-error").style.display = "block";
+            displayElement("global-error");
+            displayElement("break-type-error");
             result = true;
         } else if (breakCount < 0 || breakCount > 900) {
-            document.getElementById("global-error").style.display = "block";
-            document.getElementById("break-range-error").style.display = "block";
+            displayElement("global-error");
+            displayElement("break-range-error");
             result = true;
         }
 
@@ -331,30 +347,29 @@
     function hasErrorInBuild(height, width) {
         let result = false;
 
-        document.getElementById("height-type-error").style.display = "none";
-        document.getElementById("height-range-error").style.display = "none";
-        document.getElementById("width-type-error").style.display = "none";
-        document.getElementById("width-range-error").style.display = "none";
-
-        document.getElementById("height-input").classList.remove("field-error");
-        document.getElementById("width-input").classList.remove("field-error");
+        blindElement("height-type-error");
+        blindElement("height-range-error");
+        blindElement("width-type-error");
+        blindElement("width-range-error");
+        blindErrorMessage("height-input");
+        blindErrorMessage("width-input");
 
         if (isNaN(parseInt(height, 10))) {
-            document.getElementById("height-input").classList.add("field-error");
-            document.getElementById("height-type-error").style.display = "block";
+            displayElement("height-type-error");
+            displayErrorMessage("height-input");
             result = true;
         } else if (height < 2) {
-            document.getElementById("height-input").classList.add("field-error");
-            document.getElementById("height-range-error").style.display = "block";
+            displayElement("height-range-error");
+            displayErrorMessage("height-input");
             result = true;
         }
         if (isNaN(parseInt(width, 10))) {
-            document.getElementById("width-input").classList.add("field-error");
-            document.getElementById("width-type-error").style.display = "block";
+            displayElement("width-type-error");
+            displayErrorMessage("width-input");
             result = true;
         } else if (width < 2) {
-            document.getElementById("width-input").classList.add("field-error");
-            document.getElementById("width-range-error").style.display = "block";
+            displayElement("width-range-error");
+            displayErrorMessage("width-input");
             result = true;
         }
 
