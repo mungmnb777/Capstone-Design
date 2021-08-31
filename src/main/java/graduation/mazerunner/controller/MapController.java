@@ -6,7 +6,6 @@ import graduation.mazerunner.controller.form.MakerForm;
 import graduation.mazerunner.domain.Map;
 import graduation.mazerunner.domain.Member;
 import graduation.mazerunner.domain.Ranking;
-import graduation.mazerunner.repository.RankRepository;
 import graduation.mazerunner.service.MapService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +18,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Controller
@@ -28,7 +29,6 @@ import java.util.List;
 public class MapController {
 
     private final MapService mapService;
-    private final RankRepository rankRepository;
 
     @GetMapping("/list")
     public String getMapList(Model model, @RequestParam(defaultValue = "1") int page) {
@@ -110,11 +110,14 @@ public class MapController {
     public String playGame(@PathVariable("mapId") Long id, Model model) {
         Map findMap = mapService.load(id);
 
-        List<Ranking> rankings = rankRepository.findByMap(findMap);
+        List<Ranking> findRankings = findMap.getRankings()
+                .stream()
+                .sorted(Comparator.comparing(Ranking::getTimer))
+                .collect(Collectors.toList());
 
         model.addAttribute("map", findMap);
         model.addAttribute("member", findMap.getMember());
-        model.addAttribute("rankings", rankings);
+        model.addAttribute("rankings", findRankings);
 
         return "maps/player";
     }
@@ -129,7 +132,7 @@ public class MapController {
 
         Ranking ranking = Ranking.builder()
                 .map(findMap)
-                .member((Member)session.getAttribute(SessionConst.LOGIN_MEMBER))
+                .member((Member) session.getAttribute(SessionConst.LOGIN_MEMBER))
                 .timer(timer)
                 .build();
 
