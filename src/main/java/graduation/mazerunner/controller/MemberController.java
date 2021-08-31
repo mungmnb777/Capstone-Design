@@ -76,6 +76,7 @@ public class MemberController {
                     .passwordCheck(form.getPasswordCheck())
                     .nickname(form.getNickname())
                     .cdate(LocalDateTime.now())
+                    .udate(LocalDateTime.now())
                     .build();
 
             memberService.join(member);

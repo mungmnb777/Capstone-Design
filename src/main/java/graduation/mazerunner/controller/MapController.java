@@ -99,6 +99,7 @@ public class MapController {
                 .hit(0)
                 .recommend(0)
                 .cdate(LocalDateTime.now())
+                .udate(LocalDateTime.now())
                 .member((Member) session.getAttribute(SessionConst.LOGIN_MEMBER))
                 .build();
 

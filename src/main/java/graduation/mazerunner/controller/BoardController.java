@@ -63,6 +63,7 @@ public class BoardController {
                 .recommend(0)
                 .member((Member) session.getAttribute(SessionConst.LOGIN_MEMBER))
                 .cdate(LocalDateTime.now())
+                .udate(LocalDateTime.now())
                 .build();
 
         postService.save(post);
@@ -108,6 +109,7 @@ public class BoardController {
                 .id(id)
                 .title(form.getTitle())
                 .content(form.getContent())
+                .udate(LocalDateTime.now())
                 .build();
 
         postService.update(updatePost);
