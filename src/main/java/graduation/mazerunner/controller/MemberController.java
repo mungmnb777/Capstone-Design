@@ -26,13 +26,8 @@ public class MemberController {
     private final MemberService memberService;
 
     @GetMapping("/login")
-    public String loginForm(Model model, HttpServletRequest request) {
-        HttpSession session = request.getSession();
+    public String loginForm(Model model) {
         model.addAttribute("form", new LoginForm());
-        System.out.println(session.getAttribute(SessionConst.AAA));
-        System.out.println(session.getAttribute(SessionConst.LOGIN_MEMBER));
-        System.out.println(session.getAttribute(SessionConst.LOGIN_IDaiosdmasdiasdio));
-        System.out.println(session.getAttribute("12"));
         return "members/login";
     }
 
@@ -50,14 +45,8 @@ public class MemberController {
 
             Member loginMember = memberService.login(member);
 
-
             HttpSession session = request.getSession();
-
-
             session.setAttribute(SessionConst.LOGIN_MEMBER, loginMember);
-            session.setAttribute(SessionConst.AAA, loginMember.getId());
-            session.setAttribute(SessionConst.LOGIN_IDaiosdmasdiasdio, "loginMember");
-            session.setAttribute("12", 12);
 
             return "redirect:/";
 

@@ -17,7 +17,22 @@
             <textarea class="form-control" id="content" th:field="*{content}" rows="10" readonly></textarea>
         </div>
     </form>
-    <div th:if="${session.loginId} == ${post.member.id}" class="d-flex flex-row justify-content-center">
+    <div class="p-1 d-flex flex-row justify-content-center">
+        <button id="recommend-button"
+                class="btn btn-outline-primary"
+                style="display:none"
+                th:onclick="|recommend(${post.id})|">
+            ♡
+        </button>
+        <button id="non-recommend-button"
+                class="btn btn-primary"
+                style="display:none"
+                th:onclick="|recommend(${post.id})|">
+            ♥
+        </button>
+    </div>
+    <div th:if="${session.loginMember != null && session.loginMember.id == post.member.id}"
+         class="d-flex flex-row justify-content-center">
         <div class="p-1">
             <a th:href="@{/board/list/{postId}/update(postId = ${post.id})}">
                 <button class="btn btn-outline-secondary">수정</button>
@@ -44,5 +59,41 @@
     </div>
 </div>
 <div th:replace="fragments/footer :: footer"></div>
+<script type="text/javascript" th:inline="javascript">
+    init();
+
+    function init() {
+        getRecommendStatus();
+    }
+
+    // 초기 추천 상태 값
+    function getRecommendStatus() {
+        if ([[${recommend != null && recommend.status == T(graduation.mazerunner.domain.RecommendStatus).ON}]]) {
+            document.getElementById("non-recommend-button").style.display = "block"
+        } else if ([[${recommend != null && recommend.status == T(graduation.mazerunner.domain.RecommendStatus).OFF}]]) {
+            document.getElementById("recommend-button").style.display = "block"
+        }
+    }
+
+    // 추천 버튼 클릭 시 작동
+    function recommend(id) {
+        const url = "/board/list/" + id + "/recommend"
+
+        fetch(url, {
+            method: "post"
+        })
+            .then(res => res.json())
+            .then(recommend => {
+                if (recommend.status == "OFF") {
+                    document.getElementById("non-recommend-button").style.display = "none"
+                    document.getElementById("recommend-button").style.display = "block"
+                } else if (recommend.status == "ON") {
+                    document.getElementById("non-recommend-button").style.display = "block"
+                    document.getElementById("recommend-button").style.display = "none"
+                }
+            })
+    }
+
+</script>
 </body>
 </html>

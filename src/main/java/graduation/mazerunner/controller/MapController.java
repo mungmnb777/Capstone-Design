@@ -3,10 +3,9 @@ package graduation.mazerunner.controller;
 import graduation.mazerunner.Paging;
 import graduation.mazerunner.constant.SessionConst;
 import graduation.mazerunner.controller.form.MakerForm;
-import graduation.mazerunner.domain.Map;
-import graduation.mazerunner.domain.Member;
-import graduation.mazerunner.domain.Ranking;
+import graduation.mazerunner.domain.*;
 import graduation.mazerunner.service.MapService;
+import graduation.mazerunner.service.RecommendService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -29,6 +28,7 @@ import java.util.stream.Collectors;
 public class MapController {
 
     private final MapService mapService;
+    private final RecommendService recommendService;
 
     @GetMapping("/list")
     public String getMapList(Model model, @RequestParam(defaultValue = "1") int page) {
@@ -108,7 +108,7 @@ public class MapController {
     }
 
     @GetMapping("/list/{mapId}")
-    public String playGame(@PathVariable("mapId") Long id, Model model) {
+    public String playGame(@PathVariable("mapId") Long id, Model model, HttpSession session) {
         Map findMap = mapService.load(id);
 
         List<Ranking> findRankings = findMap.getRankings()
@@ -120,7 +120,28 @@ public class MapController {
         model.addAttribute("member", findMap.getMember());
         model.addAttribute("rankings", findRankings);
 
+        Member findMember = (Member) session.getAttribute(SessionConst.LOGIN_MEMBER);
+
+        if (findMember == null) {
+            return "maps/player";
+        }
+
+        Recommend findRecommend = recommendService.findByMapAndMember(id, findMember.getId());
+        model.addAttribute("recommend", findRecommend);
+
         return "maps/player";
+    }
+
+    @ResponseBody
+    @PostMapping("/list/{mapId}/recommend")
+    public Recommend recommendGame(@PathVariable("mapId") Long id, HttpSession session) {
+        if (session.getAttribute(SessionConst.LOGIN_MEMBER) == null) {
+            return null;
+        }
+
+        Recommend findRecommend = recommendService.recommendMap(id, ((Member) session.getAttribute(SessionConst.LOGIN_MEMBER)).getId());
+
+        return findRecommend;
     }
 
     @PostMapping("/list/{mapId}")

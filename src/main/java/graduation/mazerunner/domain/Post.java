@@ -79,11 +79,9 @@ public class Post {
         this.recommend--;
     }
 
-    public void changeTitle(String title) {
+    public void updatePost(String title, String content) {
         this.title = title;
-    }
-
-    public void changeContent(String content) {
         this.content = content;
+        this.udate = LocalDateTime.now();
     }
 }

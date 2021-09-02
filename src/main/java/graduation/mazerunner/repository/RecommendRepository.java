@@ -1,12 +1,15 @@
 package graduation.mazerunner.repository;
 
 import graduation.mazerunner.domain.Map;
+import graduation.mazerunner.domain.Member;
+import graduation.mazerunner.domain.Post;
 import graduation.mazerunner.domain.Recommend;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -22,14 +25,26 @@ public class RecommendRepository {
         return recommend.getId();
     }
 
-    public Recommend findByMapAndMember(Recommend recommend) {
-        log.info("map = {}", recommend.getMap().getTitle());
-        log.info("member = {}", recommend.getMember().getId());
+    public Recommend findByMapAndMember(Map map, Member member) {
+        try {
+            return em.createQuery("select r from Recommend r where r.map = :map and r.member = :member", Recommend.class)
+                    .setParameter("map", map)
+                    .setParameter("member", member)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
 
-        return em.createQuery("select r from Recommend r where r.map = :map and r.member = :member", Recommend.class)
-                .setParameter("map", recommend.getMap())
-                .setParameter("member", recommend.getMember())
-                .getSingleResult();
+    public Recommend findByPostAndMember(Post post, Member member) {
+        try {
+            return em.createQuery("select r from Recommend r where r.post = :post and r.member = :member", Recommend.class)
+                    .setParameter("post", post)
+                    .setParameter("member", member)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
     }
 
     public List<Map> findPopularMapList() {

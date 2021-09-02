@@ -4,7 +4,9 @@ import graduation.mazerunner.Paging;
 import graduation.mazerunner.constant.ModeConst;
 import graduation.mazerunner.domain.Map;
 import graduation.mazerunner.domain.Ranking;
+import graduation.mazerunner.domain.Recommend;
 import graduation.mazerunner.repository.MapRepository;
+import graduation.mazerunner.repository.RecommendRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,7 @@ import java.util.stream.Collectors;
 public class MapService {
 
     private final MapRepository mapRepository;
+    private final RecommendRepository recommendRepository;
 
     public void test(Map map) {
 

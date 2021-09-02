@@ -79,7 +79,7 @@ class RecommendServiceTest {
                 .udate(LocalDateTime.now())
                 .build();
 
-        memberService.join(member);
+        String memberId = memberService.join(member);
 
         Map map = Map.builder()
                 .title("123")
@@ -94,7 +94,7 @@ class RecommendServiceTest {
                 .udate(LocalDateTime.now())
                 .build();
 
-        mapService.save(map);
+        Long mapId = mapService.save(map);
 
         Recommend recommend = Recommend.builder()
                 .member(member)
@@ -104,7 +104,7 @@ class RecommendServiceTest {
 
         recommendService.save(recommend);
         // when
-        Recommend recommended = recommendService.recommendMap(recommend);
+        Recommend recommended = recommendService.recommendMap(mapId, memberId);
 
         // then
         assertThat(recommended.getStatus()).isEqualTo(RecommendStatus.ON);
@@ -124,7 +124,7 @@ class RecommendServiceTest {
                 .udate(LocalDateTime.now())
                 .build();
 
-        memberService.join(member);
+        String memberId = memberService.join(member);
 
         Map map = Map.builder()
                 .title("123")
@@ -139,7 +139,7 @@ class RecommendServiceTest {
                 .udate(LocalDateTime.now())
                 .build();
 
-        mapService.save(map);
+        Long mapId = mapService.save(map);
 
         Recommend recommend = Recommend.builder()
                 .member(member)
@@ -149,7 +149,7 @@ class RecommendServiceTest {
 
         recommendService.save(recommend);
         // when
-        Recommend recommended = recommendService.recommendMap(recommend);
+        Recommend recommended = recommendService.recommendMap(mapId, memberId);
 
         // then
         assertThat(recommended.getStatus()).isEqualTo(RecommendStatus.OFF);

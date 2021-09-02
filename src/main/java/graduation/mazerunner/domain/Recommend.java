@@ -1,5 +1,6 @@
 package graduation.mazerunner.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -8,7 +9,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Recommend {
 
@@ -19,6 +20,7 @@ public class Recommend {
     /**
      * 좋아요 누른 멤버 ID
      */
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
@@ -26,6 +28,7 @@ public class Recommend {
     /**
      * 좋아요 눌러진 MAP ID
      */
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "map_id")
     private Map map;
@@ -33,6 +36,7 @@ public class Recommend {
     /**
      * 좋아요 눌러진 POST ID
      */
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id")
     private Post post;
@@ -57,6 +61,7 @@ public class Recommend {
     private LocalDateTime udate;
 
     public RecommendStatus changeStatus() {
+        this.udate = LocalDateTime.now();
         return this.status = (this.status == RecommendStatus.OFF) ? RecommendStatus.ON : RecommendStatus.OFF;
     }
 }

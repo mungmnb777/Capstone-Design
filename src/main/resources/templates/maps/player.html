@@ -57,12 +57,26 @@
             </tr>
             <tr th:each="ranking: ${rankings}">
                 <td th:text="${rankingStat.count}"></td>
-                <td th:text="${ranking.member.getNickname()}"></td>
+                <td th:text="${ranking.member.nickname}"></td>
                 <td th:id="|timer-${rankingStat.count}|" th:text="${ranking.timer}"></td>
             </tr>
         </table>
     </div>
-    <div th:if="${session.loginId == map.member.id}" class="d-flex flex-row justify-content-center">
+    <div class="p-1 d-flex flex-row justify-content-center">
+        <button id="recommend-button"
+                class="btn btn-outline-primary"
+                style="display:none"
+                th:onclick="|recommend(${map.id})|">
+            ♡
+        </button>
+        <button id="non-recommend-button"
+                class="btn btn-primary"
+                style="display:none"
+                th:onclick="|recommend(${map.id})|">
+            ♥
+        </button>
+    </div>
+    <div th:if="${session.loginMember != null && session.loginMember.id == map.member.id}" class="d-flex flex-row justify-content-center">
         <div class="p-1">
             <a th:href="@{/maps/list/{mapId}/delete(mapId = ${map.id})}">
                 <button class="btn btn-outline-danger">삭제</button>
@@ -126,6 +140,7 @@
             map.push(arr);
         }
 
+        getRecommendStatus();
         rankingsTimerFormat();
         createTable();
     }
@@ -139,6 +154,14 @@
         showBreakCount(breakCount);
         increaseTimer();
         document.getElementById("map").style.display = "block";
+    }
+
+    function getRecommendStatus() {
+        if ([[${recommend != null && recommend.status == T(graduation.mazerunner.domain.RecommendStatus).ON}]]) {
+            document.getElementById("non-recommend-button").style.display = "block"
+        } else if ([[${recommend != null && recommend.status == T(graduation.mazerunner.domain.RecommendStatus).OFF}]]) {
+            document.getElementById("recommend-button").style.display = "block"
+        }
     }
 
     function rankingsTimerFormat() {
@@ -171,6 +194,25 @@
         let ms = time % 100;
 
         return `${min < 10 ? `0${min}` : min}:${sec < 10 ? `0${sec}` : sec}.${ms < 10 ? `0${ms}` : ms}`;
+    }
+
+    function recommend(id) {
+
+        const url = "/maps/list/" + id + "/recommend"
+
+        fetch(url, {
+            method:"post"
+        })
+        .then(res => res.json())
+        .then(recommend => {
+            if (recommend.status == "OFF") {
+                document.getElementById("non-recommend-button").style.display = "none"
+                document.getElementById("recommend-button").style.display = "block"
+            } else if (recommend.status == "ON") {
+                document.getElementById("non-recommend-button").style.display = "block"
+                document.getElementById("recommend-button").style.display = "none"
+            }
+        })
     }
     /**
      * 위치 변수 초기화

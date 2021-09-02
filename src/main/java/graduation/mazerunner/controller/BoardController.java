@@ -5,7 +5,9 @@ import graduation.mazerunner.constant.SessionConst;
 import graduation.mazerunner.controller.form.PostForm;
 import graduation.mazerunner.domain.Member;
 import graduation.mazerunner.domain.Post;
+import graduation.mazerunner.domain.Recommend;
 import graduation.mazerunner.service.PostService;
+import graduation.mazerunner.service.RecommendService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -25,6 +27,7 @@ import java.util.List;
 public class BoardController {
 
     private final PostService postService;
+    private final RecommendService recommendService;
 
     @GetMapping("/list")
     public String boardList(Model model, @RequestParam(defaultValue = "1") int page) {
@@ -77,11 +80,30 @@ public class BoardController {
         // 조회수를 증가시키기 위해 load Method 사용
         Post findPost = postService.load(id);
 
-        log.info("1={}",session.getAttribute(SessionConst.LOGIN_IDaiosdmasdiasdio));
-
         model.addAttribute("post", findPost);
 
+        // 게시글의 추천 수 불러오기
+        Member findMember = (Member) session.getAttribute(SessionConst.LOGIN_MEMBER);
+        if (findMember == null) {
+            return "board/readPost";
+        }
+
+        Recommend findRecommend = recommendService.findByPostAndMember(id, findMember.getId());
+        model.addAttribute("recommend", findRecommend);
+
         return "board/readPost";
+    }
+
+    @ResponseBody
+    @PostMapping("/list/{postId}/recommend")
+    public Recommend recommendPost(@PathVariable("postId") Long id, HttpSession session) {
+        if (session.getAttribute(SessionConst.LOGIN_MEMBER) == null) {
+            return null;
+        }
+
+        Recommend findRecommend = recommendService.recommendPost(id, ((Member) session.getAttribute(SessionConst.LOGIN_MEMBER)).getId());
+
+        return findRecommend;
     }
 
     @GetMapping("/list/{postId}/update")
