@@ -48,13 +48,17 @@ public class RecommendRepository {
     }
 
     public List<Map> findPopularMapList() {
+        // 인기 게임에 등록될 수 있는 최소 추천 수
+        final int MIN_RECOMMEND = 1;
+
+        // 혹시나 여기서 에러뜨면 order 앞에 띄어쓰기 붙여주세요
         return em.createQuery("select r.map " +
                         "from Recommend r inner join r.map m " +
                         "where r.status = 'ON' " +
                         "and r.udate > :yesterday " +
                         "and r.udate < :today " +
                         "group by r.map " +
-                        "having count(r) > 0 " +
+                        "having count(r) >= " + MIN_RECOMMEND +
                         "order by count(r) desc, m.hit desc", Map.class)
                 .setParameter("yesterday", LocalDateTime.now().minusDays(1))
                 .setParameter("today", LocalDateTime.now())
