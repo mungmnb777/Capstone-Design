@@ -64,8 +64,14 @@ public class Post {
     /**
      * 댓글 목록
      */
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<Reply> replyList = new ArrayList<>();
+
+    /**
+     * cascade를 위해 입력
+     */
+    @OneToMany(mappedBy = "map", cascade = CascadeType.ALL)
+    private List<Recommend> recommends = new ArrayList<>();
 
     public void increaseHit() {
         this.hit++;

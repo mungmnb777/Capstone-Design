@@ -57,4 +57,8 @@ public class Reply {
         post.getReplyList().add(this);
     }
 
+    public void updateContent(String content) {
+        this.content = content;
+        this.udate = LocalDateTime.now();
+    }
 }

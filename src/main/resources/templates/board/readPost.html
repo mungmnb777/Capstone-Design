@@ -51,8 +51,21 @@
         <div class="card-body">
             <ul class="list-group list-group-flush">
                 <li class="list-group-item">
-                    <textarea class="form-control" rows="3"></textarea>
+                    <textarea class="form-control" style="resize:none" rows="3"></textarea>
                     <button type="button" class="btn btn-outline-secondary mt-3">작성</button>
+                </li>
+            </ul>
+        </div>
+        <div class="card-body">
+            <hr>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                    <label class="form-label">아이디</label>
+                    <textarea class="form-control" style="resize:none" rows="3" disabled>댓글</textarea>
+                    <div class="d-flex flex-row justify-content-end">
+                        <a class="p-1 btn" onclick="alert('수정')">수정</a>
+                        <a class="p-1 btn" onclick="alert('삭제')">삭제</a>
+                    </div>
                 </li>
             </ul>
         </div>
@@ -60,8 +73,8 @@
 </div>
 <div th:replace="fragments/footer :: footer"></div>
 <script type="text/javascript" th:inline="javascript">
-    init();
 
+    init();
     function init() {
         getRecommendStatus();
     }

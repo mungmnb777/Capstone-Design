@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
@@ -14,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 @SpringBootTest
+@Transactional
 class MemberServiceTest {
 
     @Autowired MemberService memberService;
@@ -40,10 +42,14 @@ class MemberServiceTest {
         // given
         Member member1 = Member.builder()
                 .id("mungmnb777")
+                .password("asd")
+                .passwordCheck("asd")
                 .build();
 
         Member member2 = Member.builder()
                 .id("mungmnb777")
+                .password("asd")
+                .passwordCheck("asd")
                 .build();
 
         // when

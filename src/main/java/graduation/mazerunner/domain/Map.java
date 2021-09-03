@@ -80,6 +80,12 @@ public class Map {
     @OneToMany(mappedBy = "map", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Ranking> rankings = new ArrayList<>();
 
+    /**
+     * cascade
+     */
+    @OneToMany(mappedBy = "map", cascade = CascadeType.ALL)
+    private List<Recommend> recommends = new ArrayList<>();
+
 
     public void increaseHit() {
         this.hit++;

@@ -50,6 +50,7 @@ public class RecommendRepository {
     public List<Map> findPopularMapList() {
         // 인기 게임에 등록될 수 있는 최소 추천 수
         final int MIN_RECOMMEND = 1;
+        final int MAX_RESULTS = 5;
 
         // 혹시나 여기서 에러뜨면 order 앞에 띄어쓰기 붙여주세요
         return em.createQuery("select r.map " +
@@ -62,6 +63,8 @@ public class RecommendRepository {
                         "order by count(r) desc, m.hit desc", Map.class)
                 .setParameter("yesterday", LocalDateTime.now().minusDays(1))
                 .setParameter("today", LocalDateTime.now())
+                .setFirstResult(0)
+                .setMaxResults(MAX_RESULTS)
                 .getResultList();
     }
 }
