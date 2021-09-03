@@ -143,7 +143,7 @@
                 html += "<a class='p-1 btn' onclick='getUpdateReplyForm("+ data.id +")'>수정</a>";
                 html += "<a class='p-1 btn' onclick='deleteReply(" + postId + ", " + data.id + ")'>삭제</a>";
                 html += "</div>";
-                html += "<div th:id='update-confirm-button-" + data.id + "' class='d-none'>";
+                html += "<div id='update-confirm-button-" + data.id + "' class='d-none'>";
                 html += "<a class='p-1 btn' onclick='updateReply("+ postId +", "+ data.id +")'>수정완료</a>";
                 html += "</div>";
                 html += "</div>";
