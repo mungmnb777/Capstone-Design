@@ -16,8 +16,8 @@ public class ReplyService {
 
     private final ReplyRepository replyRepository;
 
-    public Reply findOne(Reply reply) {
-        return replyRepository.findOne(reply.getId());
+    public Reply findOne(Long id) {
+        return replyRepository.findOne(id);
     }
 
     public Reply insertReply(Reply reply) {

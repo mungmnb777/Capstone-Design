@@ -44,27 +44,34 @@
             </a>
         </div>
     </div>
-    <div class="card m-2">
+    <div id="reply-container" class="card m-2">
         <div class="card-header bg-light">
             <p class="fa fa-comment fa">댓글</p>
         </div>
         <div class="card-body">
             <ul class="list-group list-group-flush">
                 <li class="list-group-item">
-                    <textarea class="form-control" style="resize:none" rows="3"></textarea>
-                    <button type="button" class="btn btn-outline-secondary mt-3">작성</button>
+                    <textarea id="reply-content" class="form-control" style="resize:none" rows="3"></textarea>
+                    <button type="button" class="btn btn-outline-secondary mt-3" th:onclick="|insertReply(${post.id})|">작성</button>
                 </li>
             </ul>
         </div>
-        <div class="card-body">
+        <div class="card-body" th:id="|reply-box-${reply.id}|" th:each="reply : ${post.replyList}">
             <hr>
             <ul class="list-group list-group-flush">
                 <li class="list-group-item">
-                    <label class="form-label">아이디</label>
-                    <textarea class="form-control" style="resize:none" rows="3" disabled>댓글</textarea>
-                    <div class="d-flex flex-row justify-content-end">
-                        <a class="p-1 btn" onclick="alert('수정')">수정</a>
-                        <a class="p-1 btn" onclick="alert('삭제')">삭제</a>
+                    <label class="form-label" th:text="${reply.member.nickname}"></label>
+                    <textarea th:id="|reply-content-form-${reply.id}|" class="form-control" style="resize:none" rows="3" disabled
+                            th:text="${reply.content}">댓글</textarea>
+                    <div class="d-flex flex-row justify-content-end"
+                    th:if="${session.loginMember != null && session.loginMember.id == reply.member.id}">
+                        <div th:id="|action-button-${reply.id}|">
+                            <a class="p-1 btn" th:onclick="|getUpdateReplyForm(${reply.id})|">수정</a>
+                            <a class="p-1 btn" th:onclick="|deleteReply(${post.id}, ${reply.id})|">삭제</a>
+                        </div>
+                        <div th:id="|update-confirm-button-${reply.id}|" class="d-none">
+                            <a class="p-1 btn" th:onclick="|updateReply(${post.id}, ${reply.id})|">수정완료</a>
+                        </div>
                     </div>
                 </li>
             </ul>
@@ -107,6 +114,112 @@
             })
     }
 
+
+    function insertReply(postId) {
+        const url = "/board/list/" + postId + "/reply/insert"
+        const content = document.getElementById("reply-content").value;
+
+        fetch(url, {
+            method:'post',
+            headers:{
+                "Content-Type": "application/json"
+            },
+            body:JSON.stringify({
+                content:content
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            const root = document.getElementById("reply-container");
+
+            let html = "<div class='card-body' id='reply-box-" +  data.id + "'>";
+                html += "<hr>";
+                html += "<ul class='list-group list-group-flush'>";
+                html += "<li class='list-group-item'>";
+                    html += "<label class='form-label'>"+ data.member.nickname + "</label>";
+                html += "<textarea id='reply-content-form-"+ data.id +"'class='form-control' style='resize:none' rows='3' disabled>" + data.content + "</textarea>";
+                html += "<div class='d-flex flex-row justify-content-end'>";
+                html += "<div id='action-button-" + data.id + "'>";
+                html += "<a class='p-1 btn' onclick='getUpdateReplyForm("+ data.id +")'>수정</a>";
+                html += "<a class='p-1 btn' onclick='deleteReply(" + postId + ", " + data.id + ")'>삭제</a>";
+                html += "</div>";
+                html += "<div th:id='update-confirm-button-" + data.id + "' class='d-none'>";
+                html += "<a class='p-1 btn' onclick='updateReply("+ postId +", "+ data.id +")'>수정완료</a>";
+                html += "</div>";
+                html += "</div>";
+                html += "</li>";
+                html += "</ul>";
+                html += "</div>";
+
+            let htmlObject = document.createElement("div");
+            htmlObject.innerHTML = html;
+
+            root.append(htmlObject);
+        })
+    }
+
+    function getUpdateReplyForm(replyId) {
+        const textarea = document.getElementById("reply-content-form-" + replyId);
+        const actionButton = document.getElementById("action-button-" + replyId);
+        const updateButton = document.getElementById("update-confirm-button-" + replyId);
+
+        if (textarea.disabled === true) {
+            textarea.disabled = false;
+        }
+        if (!actionButton.classList.contains("d-none")) {
+            actionButton.classList.add("d-none");
+        }
+        if (updateButton.classList.contains("d-none")) {
+            updateButton.classList.remove("d-none");
+        }
+    }
+
+    function updateReply(postId, replyId) {
+        const textarea = document.getElementById("reply-content-form-" + replyId);
+        const actionButton = document.getElementById("action-button-" + replyId);
+        const updateButton = document.getElementById("update-confirm-button-" + replyId);
+
+        if (textarea.disabled === false) {
+            textarea.disabled = true;
+        }
+        if (actionButton.classList.contains("d-none")) {
+            actionButton.classList.remove("d-none");
+        }
+        if (!updateButton.classList.contains("d-none")) {
+            updateButton.classList.add("d-none");
+        }
+
+        const url = "/board/list/" + postId + "/reply/list/" + replyId + "/update";
+
+        fetch(url, {
+            method: 'post',
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body:JSON.stringify({
+                content: textarea.value
+            })
+        })
+    }
+
+    function deleteReply(postId, replyId) {
+        const replyBox = document.getElementById("reply-box-" + replyId);
+        const url = "/board/list/" + postId + "/reply/list/" + replyId + "/delete";
+
+        if (confirm("정말로 삭제하시겠습니까?")) {
+            fetch(url, {
+                method:'post'
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data) {
+                    replyBox.remove();
+                } else {
+                    alert("Error : 오류로 인해 삭제되지 않았습니다.");
+                }
+            })
+        }
+    }
 </script>
 </body>
 </html>
