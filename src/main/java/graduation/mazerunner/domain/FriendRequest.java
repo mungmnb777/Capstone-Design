@@ -50,4 +50,8 @@ public class FriendRequest {
     @Enumerated(EnumType.STRING)
     private RequestStatus status;
 
+    public void updateStatus(RequestStatus status) {
+        this.status = status;
+        this.udate = LocalDateTime.now();
+    }
 }

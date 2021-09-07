@@ -49,4 +49,9 @@ public class Relationship {
     @Column(name = "relation_status")
     @Enumerated(EnumType.STRING)
     private RelationStatus status;
+
+    public void updateStatus(RelationStatus status) {
+        this.status = status;
+        this.udate = LocalDateTime.now();
+    }
 }

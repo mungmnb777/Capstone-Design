@@ -153,6 +153,6 @@ class ReplyServiceTest {
         replyService.deleteReply(savedReply);
 
         // then
-        assertThat(replyService.findOne(savedReply)).isEqualTo(null);
+        assertThat(replyService.findOne(savedReply.getId())).isEqualTo(null);
     }
 }
