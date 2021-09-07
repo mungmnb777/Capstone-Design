@@ -35,6 +35,14 @@ public class MapRepository {
                 .getResultList();
     }
 
+    public List<Map> findRecentMaps(String memberId) {
+        return em.createQuery("select m from Map m where m.member.id = :memberId order by m.cdate desc", Map.class)
+                .setParameter("memberId", memberId)
+                .setFirstResult(0)
+                .setMaxResults(5)
+                .getResultList();
+    }
+
     public void delete(Long id) {
         Map map = em.find(Map.class, id);
         em.remove(map);

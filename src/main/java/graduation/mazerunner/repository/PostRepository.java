@@ -33,6 +33,14 @@ public class PostRepository {
                 .getResultList();
     }
 
+    public List<Post> findRecentPosts(String memberId) {
+        return em.createQuery("select p from Post p where p.member.id = :memberId order by p.cdate desc", Post.class)
+                .setParameter("memberId", memberId)
+                .setFirstResult(0)
+                .setMaxResults(5)
+                .getResultList();
+    }
+
     public void delete(Long id) {
         Post post = em.find(Post.class, id);
         em.remove(post);

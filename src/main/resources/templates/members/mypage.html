@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="fragments/header :: header">
+    <meta charset="UTF-8">
+    <style>
+        field-error {
+            border-color: #dc3545;
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="fragments/bodyHeader :: bodyHeader"></div>
+<div th:replace="fragments/navigation :: navigation"></div>
+<div class="container">
+    <div class="row">
+        <div class="col-md-2">
+            <div class="py-1">
+                <h4>내 친구 관리</h4>
+            </div>
+            <div class="py-1">
+                <a href="#" class="text-secondary text-decoration-none">친구 목록</a>
+            </div>
+            <div class="py-1">
+                <a href="#" class="text-secondary text-decoration-none">친구 추가</a>
+            </div>
+            <div class="py-1">
+                <a href="#" class="text-secondary text-decoration-none">받은 친구 요청</a>
+            </div>
+            <div class="py-1">
+                <a href="#" class="text-secondary text-decoration-none">보낸 친구 요청</a>
+            </div>
+            <div class="py-1">
+                <a href="#" class="text-secondary text-decoration-none">차단한 친구</a>
+            </div>
+        </div>
+        <div class="col-md-1"></div>
+        <div class="col-md-6">
+            <div class="row d-flex justify-content-center py-4">
+                <h4 class="text-center text-secondary">최근에 만든 게임</h4>
+                <table class="table table-hover">
+                    <tr>
+                        <th style="width:40px">번호</th>
+                        <th style="width:400px">게임 제목</th>
+                    </tr>
+                    <tr th:each="map : ${recentMaps}">
+                        <td th:text="${map.id}"></td>
+                        <td><a th:href="@{/maps/list/{mapId}(mapId = ${map.id})}" th:text="${map.title}"
+                               class="text-decoration-none"></a></td>
+                    </tr>
+                </table>
+                <div th:if="${recentMaps.size} == 0" class="text-center">
+                    <p>제작하신 게임이 아직 없습니다...!</p>
+                </div>
+            </div>
+            <div class="row d-flex justify-content-center py-4">
+                <h4 class="text-center text-secondary">최근에 작성한 게시글</h4>
+                <table class="table table-hover">
+                    <tr>
+                        <th style="width:40px">번호</th>
+                        <th style="width:400px">게시글 제목</th>
+                    </tr>
+                    <tr th:each="post : ${recentPosts}">
+                        <td th:text="${post.id}"></td>
+                        <td><a th:href="@{/board/list/{postId}(postId = ${post.id})}" th:text="${post.title}"
+                               class="text-decoration-none"></a></td>
+                    </tr>
+                </table>
+                <div th:if="${recentPosts.size} == 0" class="text-center">
+                    <p>작성하신 게시글이 아직 없습니다...!</p>
+                </div>
+            </div>
+            <div class="row d-flex justify-content-center py-4">
+                <h4 class="text-center text-secondary">최근에 작성한 댓글</h4>
+                <table class="table table-hover">
+                    <tr>
+                        <th style="width:40px">번호</th>
+                        <th style="width:400px">댓글 내용</th>
+                    </tr>
+                    <tr th:each="reply : ${recentReplies}">
+                        <td th:text="${reply.id}"></td>
+                        <td><a th:href="@{/board/list/{postId}(postId = ${reply.post.id})}" th:text="${reply.content}"
+                               class="text-decoration-none"></a></td>
+                    </tr>
+                </table>
+                <div th:if="${recentReplies.size} == 0" class="text-center">
+                    <p>작성하신 댓글이 아직 없습니다...!</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-1"></div>
+        <div class="col-md-2"></div>
+    </div>
+</div>
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>

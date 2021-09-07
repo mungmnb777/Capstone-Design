@@ -34,8 +34,14 @@ public class FriendRequest {
     /**
      * 요청 시점 일자
      */
-    @Column(name = "req_date")
-    private LocalDateTime date;
+    @Column(name = "req_cdate")
+    private LocalDateTime cdate;
+
+    /**
+     * 요청 상태 변경 일자
+     */
+    @Column(name = "req_udate")
+    private LocalDateTime udate;
 
     /**
      * 요청 상태

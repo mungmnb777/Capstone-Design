@@ -101,6 +101,10 @@ public class MapService {
         return mapRepository.findPerPage(paging);
     }
 
+    public List<Map> findRecentMaps(String memberId) {
+        return mapRepository.findRecentMaps(memberId);
+    }
+
     public void delete(Long id) {
         mapRepository.delete(id);
     }

@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
@@ -20,6 +21,14 @@ public class ReplyRepository {
 
     public Reply findOne(Long id) {
         return em.find(Reply.class, id);
+    }
+
+    public List<Reply> findRecentReplies(String memberId) {
+        return em.createQuery("select r from Reply r where r.member.id = :memberId order by r.cdate desc", Reply.class)
+                .setParameter("memberId", memberId)
+                .setFirstResult(0)
+                .setMaxResults(5)
+                .getResultList();
     }
 
     public void delete(Long id) {

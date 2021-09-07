@@ -34,8 +34,14 @@ public class Relationship {
     /**
      * 친구 관계 일자
      */
-    @Column(name = "relation_date")
-    private LocalDateTime date;
+    @Column(name = "relation_cdate")
+    private LocalDateTime cdate;
+
+    /**
+     * 친구 상태 변경 일자
+     */
+    @Column(name = "relation_udate")
+    private LocalDateTime udate;
 
     /**
      * 친구 상태

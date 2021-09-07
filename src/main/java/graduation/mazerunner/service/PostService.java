@@ -54,6 +54,10 @@ public class PostService {
         return postRepository.findPerPage(paging);
     }
 
+    public List<Post> findRecentPosts(String memberId) {
+        return postRepository.findRecentPosts(memberId);
+    }
+
     public Long update(Post post) {
         Post findPost = postRepository.findOne(post.getId());
 
