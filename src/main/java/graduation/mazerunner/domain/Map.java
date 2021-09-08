@@ -77,12 +77,14 @@ public class Map {
     /**
      * 게임 랭크 리스트
      */
+    @Builder.Default
     @OneToMany(mappedBy = "map", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Ranking> rankings = new ArrayList<>();
 
     /**
      * cascade
      */
+    @Builder.Default
     @OneToMany(mappedBy = "map", cascade = CascadeType.ALL)
     private List<Recommend> recommends = new ArrayList<>();
 

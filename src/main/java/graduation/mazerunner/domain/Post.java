@@ -64,12 +64,14 @@ public class Post {
     /**
      * 댓글 목록
      */
+    @Builder.Default
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<Reply> replyList = new ArrayList<>();
 
     /**
      * cascade를 위해 입력
      */
+    @Builder.Default
     @OneToMany(mappedBy = "map", cascade = CascadeType.ALL)
     private List<Recommend> recommends = new ArrayList<>();
 
