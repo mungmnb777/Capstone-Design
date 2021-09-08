@@ -235,8 +235,5 @@ class RecommendServiceTest {
         List<Map> findMaps = recommendService.findByPopularMapList();
 
         // then
-        for (Map findMap : findMaps) {
-            log.info("mapId={}", findMap.getId());
-        }
     }
 }

@@ -35,9 +35,6 @@ class PostRepositoryTest {
 
         reply.setPost(post);
 
-        log.info("reply = {}", post.getReplyList());
-        log.info("post = {}", reply.getPost());
-
         // when
         Long savedId = postRepository.save(post);
 
