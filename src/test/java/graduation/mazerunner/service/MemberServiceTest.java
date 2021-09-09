@@ -9,6 +9,7 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -143,5 +144,55 @@ class MemberServiceTest {
 
         // then
         assertThrows(IllegalArgumentException.class, () -> memberService.login(login));
+    }
+
+    @Test
+    public void 멤버검색() throws Exception {
+
+        // given
+        Member member = Member.builder()
+                .id("mungmnb1234")
+                .password("123")
+                .passwordCheck("123")
+                .nickname("나")
+                .cdate(LocalDateTime.now())
+                .udate(LocalDateTime.now())
+                .build();
+
+        memberService.join(member);
+        // when
+        List<Member> findMember1 = memberService.findByIdContaining("mnb");
+        List<Member> findMember2 = memberService.findByIdContaining("gmnb");
+        List<Member> findMember3 = memberService.findByIdContaining("mungmnb");
+        // then
+        assertThat(findMember1.get(0).getId()).isEqualTo(member.getId());
+        assertThat(findMember2.get(0).getId()).isEqualTo(member.getId());
+        assertThat(findMember3.get(0).getId()).isEqualTo(member.getId());
+    }
+
+    @Test
+    public void 닉네임검색() throws Exception {
+
+        // given
+        Member member = Member.builder()
+                .id("mungmnb1234")
+                .password("123")
+                .passwordCheck("123")
+                .nickname("어려운닉네임1234")
+                .cdate(LocalDateTime.now())
+                .udate(LocalDateTime.now())
+                .build();
+
+        memberService.join(member);
+
+        // when
+        List<Member> findMember1 = memberService.findByNicknameContaining("려운");
+        List<Member> findMember2 = memberService.findByNicknameContaining("운닉네");
+        List<Member> findMember3 = memberService.findByNicknameContaining("어려운닉네임");
+
+        // then
+        assertThat(findMember1.get(0).getNickname()).isEqualTo(member.getNickname());
+        assertThat(findMember2.get(0).getNickname()).isEqualTo(member.getNickname());
+        assertThat(findMember3.get(0).getNickname()).isEqualTo(member.getNickname());
     }
 }
