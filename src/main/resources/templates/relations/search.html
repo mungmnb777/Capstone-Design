@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="fragments/header :: header">
+    <meta charset="UTF-8">
+    <style>
+        field-error {
+            border-color: #dc3545;
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="fragments/bodyHeader :: bodyHeader"></div>
+<div th:replace="fragments/navigation :: navigation"></div>
+<div class="container">
+    <div class="row">
+        <div class="col-md-2">
+            <div th:replace="fragments/friendNav :: nav"></div>
+        </div>
+        <div class="col-md-1"></div>
+        <div class="col-md-6">
+            <div class="container-fluid">
+                <div>
+                    <h4 class="text-center text-secondary">멤버 검색</h4>
+                    <form class="d-flex justify-content-center" method="get"
+                          th:action="@{/relations/search/result}" th:object="${searchForm}">
+                        <select class="mx-1 form-select w-25" th:field="*{type}">
+                            <option value="id">아이디</option>
+                            <option value="nickname">닉네임</option>
+                        </select>
+                        <input class="form-control me-2" type="search"
+                               placeholder="Search" aria-label="Search" th:field="*{inputValue}">
+                        <button class="btn btn-outline-secondary" type="submit">Search</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-1"></div>
+        <div class="col-md-2"></div>
+    </div>
+</div>
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>

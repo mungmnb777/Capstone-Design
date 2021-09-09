@@ -46,7 +46,7 @@ public class RelationRepository {
 
     public List<Relationship> relatedFriend(String memberId, String friendId) {
         return em.createQuery("select r from Relationship r " +
-                        "where r.member.id = :memberId and r.friend.id = :friendId and r.status = :status")
+                        "where r.member.id = :memberId and r.friend.id = :friendId")
                 .setParameter("memberId", memberId)
                 .setParameter("friendId", friendId)
                 .getResultList();

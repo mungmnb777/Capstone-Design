@@ -25,8 +25,18 @@ public class RequestService {
 
     // 친구 요청
     public Long requestFriend(FriendRequest request) {
+        // 로그인 하지 않고 친구 요청하는 경우
+        if (request.getMember() == null) {
+            throw new IllegalStateException("로그인 후 가능합니다!");
+        }
+
         String memberId = request.getMember().getId();
         String friendId = request.getFriend().getId();
+
+        // 본인에게 친구 추가 하는 경우
+        if (memberId.equals(friendId)) {
+            throw new IllegalStateException("본인에게 친구 요청은 할 수 없습니다!");
+        }
 
         // 중복되는 요청이 있으면
         if (requestRepository.duplicateRequest(memberId, friendId).size() != 0) {

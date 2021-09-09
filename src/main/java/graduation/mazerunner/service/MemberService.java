@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -50,11 +51,22 @@ public class MemberService {
         return findMember;
     }
 
-    public List<Member> findByIdContaining(String id) {
-        return memberRepository.findByIdContaining(id);
+    public Member findOne(String id) {
+        return memberRepository.findOne(id);
     }
 
-    public List<Member> findByNicknameContaining(String nickname) {
-        return memberRepository.findByNicknameContaining(nickname);
+    public List<Member> findByIdOrNicknameContaining(String type, String value) {
+        List<Member> findMemberList;
+
+        if (type.equals("id")) {
+            findMemberList = memberRepository.findByIdContaining(value);
+        } else if (type.equals("nickname")) {
+            findMemberList = memberRepository.findByNicknameContaining(value);
+        } else {
+            findMemberList = new ArrayList<>();
+        }
+
+
+        return findMemberList;
     }
 }

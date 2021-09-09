@@ -67,7 +67,7 @@ public class RelationService {
     public boolean isRelated(String memberId, String friendId) {
         List<Relationship> relationships = relationRepository.relatedFriend(memberId, friendId);
 
-        if (relationships == null) {
+        if (relationships.size() == 0) {
             return false;
         } else {
             return true;

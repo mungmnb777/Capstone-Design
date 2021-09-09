@@ -161,9 +161,9 @@ class MemberServiceTest {
 
         memberService.join(member);
         // when
-        List<Member> findMember1 = memberService.findByIdContaining("mnb");
-        List<Member> findMember2 = memberService.findByIdContaining("gmnb");
-        List<Member> findMember3 = memberService.findByIdContaining("mungmnb");
+        List<Member> findMember1 = memberService.findByIdOrNicknameContaining("id","mnb");
+        List<Member> findMember2 = memberService.findByIdOrNicknameContaining("id","gmnb");
+        List<Member> findMember3 = memberService.findByIdOrNicknameContaining("id","mungmnb");
         // then
         assertThat(findMember1.get(0).getId()).isEqualTo(member.getId());
         assertThat(findMember2.get(0).getId()).isEqualTo(member.getId());
@@ -186,9 +186,9 @@ class MemberServiceTest {
         memberService.join(member);
 
         // when
-        List<Member> findMember1 = memberService.findByNicknameContaining("려운");
-        List<Member> findMember2 = memberService.findByNicknameContaining("운닉네");
-        List<Member> findMember3 = memberService.findByNicknameContaining("어려운닉네임");
+        List<Member> findMember1 = memberService.findByIdOrNicknameContaining("nickname","려운");
+        List<Member> findMember2 = memberService.findByIdOrNicknameContaining("nickname","운닉네");
+        List<Member> findMember3 = memberService.findByIdOrNicknameContaining("nickname","어려운닉네임");
 
         // then
         assertThat(findMember1.get(0).getNickname()).isEqualTo(member.getNickname());
