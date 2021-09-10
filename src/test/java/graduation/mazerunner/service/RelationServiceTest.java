@@ -60,7 +60,7 @@ class RelationServiceTest {
 
         Long savedId = relationService.addFriend(relationship);
 
-        Paging paging = new Paging(relationService.findRelationshipsCount().intValue(), 1);
+        Paging paging = new Paging(relationService.findRelationshipsCount(member.getId()).intValue(), 1);
 
         // when
         List<Relationship> findFriendList = relationService.getFriends(relationship.getMember().getId(), paging);
@@ -108,7 +108,7 @@ class RelationServiceTest {
 
         relationService.block(savedId);
 
-        Paging paging = new Paging(relationService.findRelationshipsCount().intValue(), 1);
+        Paging paging = new Paging(relationService.findRelationshipsCount(member.getId()).intValue(), 1);
 
         // when
         List<Relationship> blockedFriends = relationService.getBlockedFriends(relationship.getMember().getId(), paging);

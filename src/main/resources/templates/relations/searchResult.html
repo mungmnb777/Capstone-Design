@@ -20,6 +20,13 @@
         <div class="col-md-1"></div>
         <div class="col-md-6">
             <div class="container-fluid">
+                <div class="d-flex justify-content-center" th:object="${requestForm}">
+                    <div class="py-1" th:if="${#fields.hasGlobalErrors()}">
+                        <p class="field-error" th:each="err : ${#fields.globalErrors()}" th:text="${err}">
+                            글로벌 오류 메세지
+                        </p>
+                    </div>
+                </div>
                 <div>
                     <h4 class="text-center text-secondary">멤버 검색</h4>
                     <form class="d-flex justify-content-center" method="get"
@@ -45,8 +52,10 @@
                             <td class="text-center" th:text="${member.nickname}"></td>
                             <form th:object="${requestForm}" th:action method="post">
                                 <td class="text-center">
-                                    <input type="text" id="id" name="id" th:value="${member.id}" hidden>
-                                    <button class="btn btn-sm btn-outline-secondary" style="height:30px" type="submit">요청</button>
+                                    <input type="text" name="id" th:value="${member.id}" hidden>
+                                    <button class="btn btn-sm btn-outline-secondary" style="height:30px" type="submit">
+                                        요청
+                                    </button>
                                 </td>
                             </form>
                         </tr>

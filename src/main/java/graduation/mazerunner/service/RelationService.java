@@ -59,9 +59,21 @@ public class RelationService {
         findRelationship.updateStatus(RelationStatus.BLOCK);
     }
 
+    /**
+     * 차단해제
+     */
+    public void unblock(Long id) {
+        Relationship findRelationship = relationRepository.findOne(id);
+        findRelationship.updateStatus(RelationStatus.FRIEND);
+    }
+
     // 페이징을 위한 DB 내 Request 레코드 수 조회
-    public Long findRelationshipsCount() {
-        return relationRepository.findRelationshipsCount();
+    public Long findRelationshipsCount(String memberId) {
+        return relationRepository.findRelationshipsCount(memberId);
+    }
+
+    public Long findBlockRelationshipsCount(String memberId) {
+        return relationRepository.findBlockRelationshipsCount(memberId);
     }
 
     public boolean isRelated(String memberId, String friendId) {
@@ -75,9 +87,13 @@ public class RelationService {
     }
 
     /**
-     * 차단 해제 혹은 친구 삭제
+     * 친구 삭제
      */
     public void delete(Long id) {
+        Relationship findRelation = relationRepository.findOne(id);
+        Relationship findOtherRelation = relationRepository.findByMemberAndFriend(findRelation.getFriend(), findRelation.getMember());
+
         relationRepository.delete(id);
+        relationRepository.delete(findOtherRelation.getId());
     }
 }

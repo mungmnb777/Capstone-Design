@@ -95,7 +95,12 @@ public class RequestService {
     }
 
     // 페이징을 위한 DB 내 Request 레코드 수 조회
-    public Long findPostsCount() {
-        return requestRepository.findRequestsCount();
+    public Long findReceiveRequestsCount(String memberId) {
+        return requestRepository.findReceiveRequestsCount(memberId);
+    }
+
+    // 페이징을 위한 DB 내 Request 레코드 수 조회
+    public Long findSendRequestsCount(String memberId) {
+        return requestRepository.findSendRequestsCount(memberId);
     }
 }
