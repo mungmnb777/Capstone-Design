@@ -121,7 +121,7 @@ class RequestServiceTest {
         requestService.requestFriend(request1);
         requestService.requestFriend(request2);
 
-        Paging paging = new Paging(requestService.findPostsCount().intValue(), 1);
+        Paging paging = new Paging(requestService.findSendRequestsCount(member.getId()).intValue(), 1);
 
         // when
         List<FriendRequest> sendRequestList = requestService.getSendRequestList(member.getId(), paging);
@@ -184,11 +184,12 @@ class RequestServiceTest {
         requestService.requestFriend(request1);
         requestService.requestFriend(request2);
 
-        Paging paging = new Paging(requestService.findPostsCount().intValue(), 1);
+        Paging paging1 = new Paging(requestService.findReceiveRequestsCount(friend1.getId()).intValue(), 1);
+        Paging paging2 = new Paging(requestService.findReceiveRequestsCount(friend2.getId()).intValue(), 1);
 
         // when
-        List<FriendRequest> receiveRequestList1 = requestService.getReceiveRequestList(friend1.getId(), paging);
-        List<FriendRequest> receiveRequestList2 = requestService.getReceiveRequestList(friend2.getId(), paging);
+        List<FriendRequest> receiveRequestList1 = requestService.getReceiveRequestList(friend1.getId(), paging1);
+        List<FriendRequest> receiveRequestList2 = requestService.getReceiveRequestList(friend2.getId(), paging2);
 
         // then
         assertThat(receiveRequestList1.size()).isEqualTo(1);

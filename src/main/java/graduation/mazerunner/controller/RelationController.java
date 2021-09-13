@@ -94,6 +94,7 @@ public class RelationController {
         List<FriendRequest> findRequests = requestService.getReceiveRequestList(currentMember.getId(), paging);
 
         model.addAttribute("requestList", findRequests);
+        model.addAttribute("paging", paging);
         model.addAttribute("requestForm", new RequestForm());
         model.addAttribute("result", new RequestResultForm());
 
@@ -110,6 +111,7 @@ public class RelationController {
         List<FriendRequest> findRequests = requestService.getSendRequestList(currentMember.getId(), paging);
 
         model.addAttribute("requestList", findRequests);
+        model.addAttribute("paging", paging);
         model.addAttribute("requestForm", new RequestForm());
         model.addAttribute("result", new RequestResultForm());
 
@@ -150,6 +152,7 @@ public class RelationController {
         List<Relationship> findFriendList = relationService.getFriends(findMember.getId(), paging);
 
         model.addAttribute("relationList", findFriendList);
+        model.addAttribute("paging", paging);
         model.addAttribute("result", new RelationResultForm());
 
         return "relations/list";
@@ -187,6 +190,7 @@ public class RelationController {
         List<Relationship> findFriendList = relationService.getBlockedFriends(findMember.getId(), paging);
 
         model.addAttribute("relationList", findFriendList);
+        model.addAttribute("paging", paging);
         model.addAttribute("result", new RelationResultForm());
 
         return "relations/blockList";

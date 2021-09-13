@@ -40,6 +40,22 @@
                         </tr>
                     </table>
                 </div>
+                <div class="p-1 d-flex justify-content-center">
+                    <ul class="pagination">
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1"
+                               th:href="@{/maps/list/(page=${paging.prevBlock})}">이전</a>
+                        </li>
+                        <li class="page-item" th:each="page : ${#numbers.sequence(paging.startPage, paging.endPage)}">
+                            <a class="page-link" href="?page=1" th:href="@{/maps/list/(page=${page})}"
+                               th:text="${page}"></a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1"
+                               th:href="@{/maps/list/(page=${paging.nextBlock})}">다음</a>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
         <div class="col-md-1"></div>
