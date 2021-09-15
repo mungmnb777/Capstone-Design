@@ -38,6 +38,13 @@ public class RelationService {
     }
 
     /**
+     * 내 친구들 목록(페이징X)
+     */
+    public List<Relationship> getFriends(String memberId) {
+        return relationRepository.findFriendsWithoutPaging(memberId);
+    }
+
+    /**
      * 친구 목록 조회
      */
     public List<Relationship> getFriends(String memberId, Paging paging) {

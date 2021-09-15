@@ -20,8 +20,10 @@
             </tr>
             <tr th:each="map : ${mapList}">
                 <td th:text="${map.id}"></td>
-                <td><a th:href="@{/maps/list/{mapId}(mapId = ${map.id})}" th:text="${map.title}" class="text-decoration-none"></a></td>
-                <td th:text="${map.member.getNickname()}"></td>
+                <td th:if="${map.related}"><strong><a th:href="@{/maps/list/{mapId}(mapId = ${map.id})}" th:text="${map.title}" class="text-decoration-none text-danger"></a></strong></td>
+                <td th:if="${!map.related}"><a th:href="@{/maps/list/{mapId}(mapId = ${map.id})}" th:text="${map.title}" class="text-decoration-none"></a></td>
+                <td th:if="${map.related}" th:text="|${map.member.nickname}(친구)|"></td>
+                <td th:if="${!map.related}" th:text="${map.member.nickname}"></td>
                 <td th:text="${#temporals.format(map.cdate, 'yyyy-MM-dd HH:mm')}"></td>
                 <td th:text="${map.hit}"></td>
                 <td th:text="${map.recommend}"></td>

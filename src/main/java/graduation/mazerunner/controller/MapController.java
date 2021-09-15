@@ -3,11 +3,14 @@ package graduation.mazerunner.controller;
 import graduation.mazerunner.Paging;
 import graduation.mazerunner.constant.SessionConst;
 import graduation.mazerunner.controller.form.MakerForm;
+import graduation.mazerunner.controller.form.MapForm;
 import graduation.mazerunner.domain.*;
 import graduation.mazerunner.service.MapService;
 import graduation.mazerunner.service.RecommendService;
+import graduation.mazerunner.service.RelationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Session;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -17,6 +20,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,18 +32,46 @@ import java.util.stream.Collectors;
 public class MapController {
 
     private final MapService mapService;
+    private final RelationService relationService;
     private final RecommendService recommendService;
 
     @GetMapping("/list")
-    public String getMapList(Model model, @RequestParam(defaultValue = "1") int page) {
+    public String getMapList(Model model, @RequestParam(defaultValue = "1") int page, HttpSession session) {
+
+        Member currentMember = (Member) session.getAttribute(SessionConst.LOGIN_MEMBER);
 
         int totalPostCnt = mapService.findMapsCount().intValue();
 
         Paging paging = new Paging(totalPostCnt, page);
 
         List<Map> mapList = mapService.findPerPage(paging);
+        List<MapForm> mapForms = new ArrayList<>();
 
-        model.addAttribute("mapList", mapList);
+        for (Map map : mapList) {
+            MapForm form = new MapForm();
+
+            form.setId(map.getId());
+            form.setMember(map.getMember());
+            form.setTitle(map.getTitle());
+            form.setCdate(map.getCdate());
+            form.setUdate(map.getUdate());
+            form.setHit(map.getHit());
+            form.setRecommend(map.getRecommend());
+            form.setRelated(false);
+
+            if (currentMember != null) {
+                List<Relationship> friends = relationService.getFriends(currentMember.getId());
+
+                for (Relationship friend : friends) {
+                    if (friend.getFriend().getId().equals(map.getMember().getId())) {
+                        form.setRelated(true);
+                    }
+                }
+            }
+            mapForms.add(form);
+        }
+
+        model.addAttribute("mapList", mapForms);
         model.addAttribute("paging", paging);
 
         return "maps/list";

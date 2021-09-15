@@ -86,4 +86,12 @@ public class RelationRepository {
         Relationship findRelationship = em.find(Relationship.class, id);
         em.remove(findRelationship);
     }
+
+    public List<Relationship> findFriendsWithoutPaging(String memberId) {
+        return em.createQuery("select r from Relationship r " +
+                        "where r.member.id = :memberId and r.status = :status order by r.cdate")
+                .setParameter("memberId", memberId)
+                .setParameter("status", RelationStatus.FRIEND)
+                .getResultList();
+    }
 }
